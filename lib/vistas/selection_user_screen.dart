@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:app_salud_citas/vistas/menu_screen.dart';
 import 'package:app_salud_citas/vistas/main_screen.dart';
 
-
-
 class SelectionUserScreen extends StatelessWidget {
   const SelectionUserScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonWidth = screenWidth * 0.75;
+    final buttonWidth = screenWidth * 0.60;
 
     return Scaffold(
       body: Stack(
@@ -18,7 +16,7 @@ class SelectionUserScreen extends StatelessWidget {
           // Fondo completo
           SizedBox.expand(
             child: Image.asset(
-              'assets/doctorHome.png',
+              'assets/selectionuserNew.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -29,6 +27,16 @@ class SelectionUserScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 20),
+
+                  // Logo centrado arriba
+                  Center(
+                    child: Image.asset(
+                      'assets/drLink.png',
+                      height: 80,
+                    ),
+                  ),
+
                   const SizedBox(height: 40),
 
                   // Botón: Soy Doctor
@@ -42,13 +50,17 @@ class SelectionUserScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => const MainScreen()),
                           );
                         },
-                        icon: const Icon(Icons.medical_services, color: Colors.white),
+                        icon: Image.asset(
+                          'assets/iconDoctor.png',
+                          height: 40,
+                          width: 40,
+                        ),
                         label: const Text('DOCTOR'),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF6EE4A3),
                           foregroundColor: Colors.white,
                           side: const BorderSide(color: Color(0xFF6EE4A3)),
-                          minimumSize: const Size.fromHeight(50),
+                          minimumSize: const Size.fromHeight(40),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -70,12 +82,16 @@ class SelectionUserScreen extends StatelessWidget {
                             MaterialPageRoute(builder: (context) => const MainScreen()),
                           );
                         },
-                        icon: const Icon(Icons.person, color: Colors.white),
+                        icon: Image.asset(
+                          'assets/iconPaciente.png',
+                          height: 40,
+                          width: 40,
+                        ),
                         label: const Text('PACIENTE'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6EE4A3),
+                          backgroundColor: const Color(0xFF26A69A),
                           foregroundColor: Colors.white,
-                          minimumSize: const Size.fromHeight(50),
+                          minimumSize: const Size.fromHeight(40),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
