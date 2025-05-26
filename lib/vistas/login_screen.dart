@@ -26,14 +26,6 @@ class LoginScreen extends StatelessWidget {
                     width: 120,
                   ),
                 ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Image.asset(
-                    'assets/borde_login_derecho.png',
-                    width: 120,
-                  ),
-                ),
               ],
             ),
           ),

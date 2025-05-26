@@ -1,4 +1,10 @@
+<<<<<<< HEAD
  
+=======
+import 'package:app_salud_citas/vistas/login_screen.dart';
+import 'package:app_salud_citas/vistas/NewLoginScreen.dart';
+import 'package:app_salud_citas/vistas/splah_screed.dart';
+>>>>>>> 31e48ce759312d9d082504f2f4367842c83ea9e4
 import 'package:flutter/material.dart';
 import 'vistas/home_screen.dart';
 import 'vistas/login_screen.dart';// <--- Aquí la importación
@@ -15,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Menu Principal',
-      home: const LoginScreen(),
+      home: const NewLoginScreen(),
       //home: const HomeScreen(),
     );
   }

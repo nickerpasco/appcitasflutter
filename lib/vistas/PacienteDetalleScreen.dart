@@ -10,7 +10,7 @@ class PacienteDetalleScreen extends StatelessWidget {
         children: [
           SizedBox.expand(
             child: Image.asset(
-              'assets/login.png', // mismo fondo que MenuClinicasPage
+              'assets/slectionUserBackground.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -20,27 +20,20 @@ class PacienteDetalleScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-
-                  // Logo, íconos derecha
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Reemplazar si no existe el logo
-                      // Image.asset('assets/logo.png', height: 32),
-                      Text('Dr. Link', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                      Row(
-                        children: const [
-                          Icon(Icons.call, color: Colors.black54),
-                          SizedBox(width: 12),
-                          Icon(Icons.notifications_none, color: Colors.black54),
-                        ],
-                      )
+                      const Icon(Icons.menu, color: Colors.black),
+                      Image.asset(
+                        'assets/drLink.png',
+                        height: 32,
+                      ),
+                      const Icon(Icons.call, color: Colors.black),
                     ],
                   ),
 
                   const SizedBox(height: 20),
 
-                  // Avatar y datos
                   const CircleAvatar(
                     radius: 40,
                     backgroundImage: AssetImage('assets/doctor.png'),
@@ -53,7 +46,6 @@ class PacienteDetalleScreen extends StatelessWidget {
 
                   const SizedBox(height: 16),
 
-                  // Tabs
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -67,81 +59,92 @@ class PacienteDetalleScreen extends StatelessWidget {
                         )
                       ],
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _TabButton(label: 'H. Médico', selected: true),
-                        _TabButton(label: 'Recetas'),
-                        _TabButton(label: 'Historial'),
-                        _TabButton(label: 'Archivos'),
-                      ],
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _TabButton(label: 'H. Médico', selected: true),
+                          const SizedBox(width: 8),
+                          _TabButton(label: 'Recetas'),
+                          const SizedBox(width: 8),
+                          _TabButton(label: 'Historial'),
+                          const SizedBox(width: 8),
+                          _TabButton(label: 'Archivos'),
+                        ],
+                      ),
                     ),
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Contenido scrollable debajo de la línea roja
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          // Tarjeta de información médica
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: Colors.green, width: 1.5),
-                            ),
-                            child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Paciente Roxana Jaro'),
-                                Text('21 marzo 2025 a la 03:18 pm'),
-                                SizedBox(height: 12),
-                                Text('Evolución y actualización del cuadro clínico', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('ddsaaa'),
-                                SizedBox(height: 8),
-                                Text('Resultado de estudios', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('ddsaaa'),
-                                SizedBox(height: 8),
-                                Text('Diagnóstico', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('leucemia'),
-                                SizedBox(height: 8),
-                                Text('Pronóstico', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('3 meses de vida'),
-                                SizedBox(height: 8),
-                                Text('Plan de tratamiento', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('quimioterapia'),
-                                SizedBox(height: 8),
-                                Text('Nota adicional', style: TextStyle(fontWeight: FontWeight.bold)),
-                                Text('quimioterapia'),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          // Resultados laboratorio
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFCBF5E3),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const ListTile(
-                              title: Text('Resultados de laboratorio',
-                                  style: TextStyle(fontWeight: FontWeight.bold)),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Dr. Jacinto Peralta Muñoz'),
-                                  Text('0318-1608-2105'),
-                                ],
+                          Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFF5CFCCC), width: 1.5),
+                                ),
+                                child: const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Paciente Roxana Jaro'),
+                                    Text('21 marzo 2025 a la 03:18 pm'),
+                                    SizedBox(height: 12),
+                                    Text('Evolución y actualización del cuadro clínico', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('ddsaaa'),
+                                    SizedBox(height: 8),
+                                    Text('Resultado de estudios', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('ddsaaa'),
+                                    SizedBox(height: 8),
+                                    Text('Diagnóstico', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('leucemia'),
+                                    SizedBox(height: 8),
+                                    Text('Pronóstico', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('3 meses de vida'),
+                                    SizedBox(height: 8),
+                                    Text('Plan de tratamiento', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('quimioterapia'),
+                                    SizedBox(height: 8),
+                                    Text('Nota adicional', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('quimioterapia'),
+                                  ],
+                                ),
                               ),
-                              trailing: Text('3:02 PM'),
-                            ),
+                              Positioned(
+                                bottom: -30,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(12),
+                                  width: 250,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF82EAC1),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Resultados de laboratorio',
+                                          style: TextStyle(fontWeight: FontWeight.bold)),
+                                      Text('Dr Jacinto Peralta Muñoz'),
+                                      Text('0318–1608–2105'),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Text('3:02 PM',
+                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
 
                           const SizedBox(height: 80),
@@ -155,7 +158,6 @@ class PacienteDetalleScreen extends StatelessWidget {
           ),
         ],
       ),
-
     );
   }
 }
@@ -171,14 +173,18 @@ class _TabButton extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: selected ? const Color(0xFF6EE4A3) : Colors.white,
+        color: selected ? Colors.white : const Color(0xFF5CFCCC),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: const Color(0xFF5CFCCC),
+          width: 1.5,
+        ),
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
-          color: selected ? Colors.white : Colors.black,
+          color: Colors.black,
         ),
       ),
     );

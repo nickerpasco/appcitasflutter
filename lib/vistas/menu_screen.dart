@@ -10,7 +10,7 @@ class MenuClinicasPage extends StatelessWidget {
         children: [
           SizedBox.expand(
             child: Image.asset(
-              'assets/login.png',
+              'assets/slectionUserBackground.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -23,11 +23,13 @@ class MenuClinicasPage extends StatelessWidget {
                   // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [
-                      Icon(Icons.menu, color: Colors.black),
-                      Text('Clínicas',
-                          style: TextStyle(fontSize: 18, color: Colors.black)),
-                      Icon(Icons.call, color: Colors.black),
+                    children: [
+                      const Icon(Icons.menu, color: Colors.black),
+                      Image.asset(
+                        'assets/drLink.png',
+                        height: 32,
+                      ),
+                      const Icon(Icons.call, color: Colors.black),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -41,10 +43,9 @@ class MenuClinicasPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text('Hola , Cristopher',
-                      style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   const Text('¿Cómo puedo ayudarte hoy?',
-                      style: TextStyle(color: Colors.green)),
+                      style: TextStyle(color: Colors.black)),
                   const SizedBox(height: 20),
 
                   // Buscador
@@ -53,6 +54,10 @@ class MenuClinicasPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: const Color(0xFF5CFCCC),
+                        width: 1.5,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.1),
@@ -75,10 +80,10 @@ class MenuClinicasPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const [
-                      _IconButtonWithLabel(Icons.person, 'Perfil'),
-                      _IconButtonWithLabel(Icons.calendar_month, 'Reservas'),
-                      _IconButtonWithLabel(Icons.history, 'Historial médico'),
-                      _IconButtonWithLabel(Icons.more_horiz, 'Más'),
+                      _IconButtonWithLabel(label: 'Agendar', assetImage: 'assets/perfilIco.png'),
+                      _IconButtonWithLabel(label: 'Recetas', assetImage: 'assets/7.png'),
+                      _IconButtonWithLabel(label: 'Procedimientos', assetImage: 'assets/8.png'),
+                      _IconButtonWithLabel(label: 'Fotos', assetImage: 'assets/9.png'),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -87,22 +92,33 @@ class MenuClinicasPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEAF9F3),
-                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Color(0xFF5CFCCC), width: 1.5),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'Usted tiene una cita en la sucursal de Miraflores a las 03:18 pm del 25/04/2025',
-                            style: TextStyle(color: Colors.black87),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Notificación de cita',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Color(0xFF003333),
                           ),
                         ),
-                        Icon(Icons.arrow_forward_ios, size: 16)
+                        SizedBox(height: 6),
+                        Text(
+                          'Usted tiene una cita  en la sucursal de Miraflores\na las 03:18 pm del 25/04/2025',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                          ),
+                        ),
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 20),
 
                   // Título lista de doctores
@@ -118,8 +134,8 @@ class MenuClinicasPage extends StatelessWidget {
                   // Lista scrollable de doctores
                   Expanded(
                     child: ListView(
-                      padding: const EdgeInsets.only(top: 8),
-                      children: const [
+                      padding: EdgeInsets.only(top: 8),
+                      children: [
                         _DoctorCard(
                           name: 'Dr. Shen',
                           specialty: 'Cardiólogo y Cirujano',
@@ -154,25 +170,24 @@ class MenuClinicasPage extends StatelessWidget {
           )
         ],
       ),
-
     );
   }
 }
 
 class _IconButtonWithLabel extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
   final String label;
+  final String? assetImage;
 
-  const _IconButtonWithLabel(this.icon, this.label);
+  const _IconButtonWithLabel({this.icon, required this.label, this.assetImage});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CircleAvatar(
-          backgroundColor: const Color(0xFFEAF9F3),
-          child: Icon(icon, color: Colors.green),
-        ),
+        assetImage != null
+            ? Image.asset(assetImage!, height: 32, width: 32)
+            : Icon(icon, size: 32, color: Colors.green),
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(fontSize: 12))
       ],
@@ -193,27 +208,68 @@ class _DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: const CircleAvatar(
-          backgroundImage: AssetImage('assets/doctor.png'),
-        ),
-        title: Text(name),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(specialty),
-            Text(location),
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: const [
-            Icon(Icons.star, color: Colors.amber, size: 16),
-            Text('4.9'),
-          ],
-        ),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          )
+        ],
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 28,
+            backgroundImage: AssetImage('assets/doctor.png'),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Color(0xFF4B2C20),
+                  ),
+                ),
+                Text(
+                  specialty,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on, color: Colors.green, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      location,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Row(
+            children: const [
+              Icon(Icons.star, color: Colors.amber, size: 18),
+              SizedBox(width: 4),
+              Text(
+                '4.9',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
