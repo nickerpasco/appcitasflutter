@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:app_salud_citas/vistas/selection_user_screen.dart';
+
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -93,7 +95,12 @@ class LoginScreen extends StatelessWidget {
                         minimumSize: const Size(335, 65),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SelectionUserScreen()),
+                        );
+                      },
                       child: const Text(
                         'Ingresar',
                         style: TextStyle(color: Colors.white, fontSize: 16, fontFamily: 'Poppins'),
