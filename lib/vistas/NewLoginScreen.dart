@@ -61,11 +61,19 @@ class NewLoginScreen extends StatelessWidget {
                         // Campo Contraseña
                         TextField(
                           controller: loginProvider.passwordController,
-                          obscureText: true,
+                          obscureText: loginProvider.obscurePassword,
                           decoration: InputDecoration(
                             hintText: 'Contraseña',
                             prefixIcon: const Icon(Icons.lock_outline),
-                            suffixIcon: const Icon(Icons.visibility_off),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                loginProvider.obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                loginProvider.togglePasswordVisibility();
+                              },
+                            ),
                             filled: true,
                             fillColor: Colors.white,
                             border: OutlineInputBorder(
