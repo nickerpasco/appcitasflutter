@@ -19,11 +19,7 @@ class AuthService {
         body: jsonEncode({}),
       );
 
-<<<<<<< HEAD
-    print(response);
-=======
       print('status: $response.statusCode' );
->>>>>>> 684f69ccf1a9971bf23a3550907b855e0939583e
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
