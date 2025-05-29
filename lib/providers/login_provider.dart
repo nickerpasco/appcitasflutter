@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/services/auth_service.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class LoginProvider with ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
@@ -30,9 +32,15 @@ class LoginProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await AuthService().loginPaciente(email, password);
-      if (response != null) {
-        _loginResponse = response;
+      final result = await AuthService().loginPaciente(email, password);
+      if (result  != null) {
+        _loginResponse = result.response;
+
+        // Guardar en SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('auth_token', result.token);
+        await prefs.setString('user_data', jsonEncode(result.response.toJson()));
+
         _isLoading = false;
         notifyListeners();
         return true;
@@ -56,5 +64,15 @@ class LoginProvider with ChangeNotifier {
   void disposeControllers() {
     emailController.dispose();
     passwordController.dispose();
+  }
+
+
+  ///Lógica del btn del ojo
+  bool _obscurePassword = true;
+  bool get obscurePassword => _obscurePassword;
+
+  void togglePasswordVisibility() {
+    _obscurePassword = !_obscurePassword;
+    notifyListeners();
   }
 }
