@@ -1,18 +1,69 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class RecetasScreen extends StatelessWidget {
+import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/procedimiento_provider.dart';
+
+class RecetasScreen extends StatefulWidget {
   const RecetasScreen({super.key});
 
   @override
+  State<RecetasScreen> createState() => _RecetasScreenState();
+}
+
+class _RecetasScreenState extends State<RecetasScreen> {
+  String _nombreUsuario = 'Sin Nombre';
+  String _apellidoPuser = 'Sin Ap Pat.';
+  String _apellidoMuser = 'Sin Ap Mat.';
+  String _nombreCompleto = '';
+  String _fechaNacFormated = '';
+
+  Future<void> cargarNombreUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      final data = LoginResponse.fromJson(jsonDecode(json));
+      setState(() {
+        _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+        _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
+        _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
+        _nombreCompleto = _nombreUsuario + " " + _apellidoPuser + " " +_apellidoMuser;
+        //FechaNacimiento
+        final nacimiento = DateTime.parse(data.data?.persona?.fechaNacimiento ?? DateTime.now().toString() );
+        final hoy = DateTime.now();
+
+        int anos = hoy.year - nacimiento.year;
+        int meses = hoy.month - nacimiento.month;
+
+        if (meses < 0 || (meses == 0 && hoy.day < nacimiento.day)) {
+          anos--;
+          meses += 12;
+        }
+
+        _fechaNacFormated = '$anos años y $meses meses';
+
+
+      });
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProcedimientoProvider>(context, listen: false).cargarProcedimientos();
+    cargarNombreUsuario();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ProcedimientoProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
           SizedBox.expand(
-            child: Image.asset(
-              'assets/slectionUserBackground.png',
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset('assets/slectionUserBackground.png', fit: BoxFit.cover),
           ),
           SafeArea(
             child: Padding(
@@ -20,61 +71,24 @@ class RecetasScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(Icons.menu, color: Colors.black),
-                      Image.asset(
-                        'assets/drLink.png',
-                        height: 32,
-                      ),
-                      const Icon(Icons.call, color: Colors.black),
+                      const Icon(Icons.menu),
+                      Image.asset('assets/drLink.png', height: 32),
+                      const Icon(Icons.call),
                     ],
                   ),
                   const SizedBox(height: 20),
-
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/doctor.png'),
-                  ),
+                  const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/doctor.png')),
                   const SizedBox(height: 12),
-                  const Text('Roxana Jara Molinma',
+                  Text('$_nombreCompleto',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const Text('0 Años Y 4 Meses  |  WhatsApp',
+                  Text('$_fechaNacFormated  |  WhatsApp',
                       style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 16),
 
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        )
-                      ],
-                    ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _TabButton(label: 'H. Médico', selected: true),
-                          const SizedBox(width: 8),
-                          _TabButton(label: 'Recetas'),
-                          const SizedBox(width: 8),
-                          _TabButton(label: 'Historial'),
-                          const SizedBox(width: 8),
-                          _TabButton(label: 'Archivos'),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
+                  const _TabSelector(),
 
                   // Selector de periodo
                   Row(
@@ -92,7 +106,10 @@ class RecetasScreen extends StatelessWidget {
                         ),
                         child: const Text(
                           'Actual',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       IconButton(
@@ -104,49 +121,80 @@ class RecetasScreen extends StatelessWidget {
 
                   const SizedBox(height: 10),
 
-                  // Lista de recetas
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: 3,
-                      itemBuilder: (context, index) => Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: const Color(0xFF5CFCCC)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('RECETA Nº 1152539874', style: TextStyle(fontWeight: FontWeight.bold)),
-                                  SizedBox(height: 4),
-                                  Text('Médico: MIKEY THOMPSSON HUGARTE'),
-                                  Text('C. Asistencial: H.N. EDGARDO REBAGLIATI'),
-                                  Text('Fecha: 26/4/2025      Hora: 03:35 pm'),
-                                ],
+                    child: provider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                      itemCount: provider.procedimientos.length,
+                      itemBuilder: (context, index) {
+                        final p = provider.procedimientos[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(color: const Color(0xFF5CFCCC)),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Historial: ${p.codigoHistorial}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    Text('Médico: ${p.medico}'),
+                                    Text('Sucursal: ${p.sucursal}'),
+                                    Text('Fecha: ${p.fechaFormateada}     Hora: ${p.horaFormateada}'),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            const CircleAvatar(
-                              backgroundColor: const Color(0xFF2E687A),
-                              child: Icon(Icons.arrow_forward, color: Colors.white),
-                            )
-                          ],
-                        ),
-                      ),
+                              const SizedBox(width: 8),
+                              const CircleAvatar(
+                                backgroundColor: Color(0xFF2E687A),
+                                child: Icon(Icons.arrow_forward, color: Colors.white),
+                              )
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
-
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _TabSelector extends StatelessWidget {
+  const _TabSelector();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: const [
+            _TabButton(label: 'H. Médico'),
+            SizedBox(width: 8),
+            _TabButton(label: 'Recetas', selected: true),
+            SizedBox(width: 8),
+            _TabButton(label: 'Historial'),
+            SizedBox(width: 8),
+            _TabButton(label: 'Archivos'),
+          ],
+        ),
       ),
     );
   }
@@ -165,18 +213,9 @@ class _TabButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: selected ? Colors.white : const Color(0xFF5CFCCC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFF5CFCCC),
-          width: 1.5,
-        ),
+        border: Border.all(color: const Color(0xFF5CFCCC), width: 1.5),
       ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
+      child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 }

@@ -62,11 +62,11 @@ class HistorialScreen extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          _TabButton(label: 'H. Médico', selected: true),
+                          _TabButton(label: 'H. Médico'),
                           const SizedBox(width: 8),
                           _TabButton(label: 'Recetas'),
                           const SizedBox(width: 8),
-                          _TabButton(label: 'Historial'),
+                          _TabButton(label: 'Historial', selected: true),
                           const SizedBox(width: 8),
                           _TabButton(label: 'Archivos'),
                         ],
