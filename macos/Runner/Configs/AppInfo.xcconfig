@@ -8,7 +8,7 @@
 PRODUCT_NAME = app_salud_citas
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.appSaludCitas
+PRODUCT_BUNDLE_IDENTIFIER = com.drlink.appSaludCitas
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2025 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2025 com.drlink. All rights reserved.

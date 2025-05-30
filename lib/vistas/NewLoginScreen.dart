@@ -139,7 +139,11 @@ class NewLoginScreen extends StatelessWidget {
                         const SizedBox(height: 16),
 
                         OutlinedButton.icon(
-                          onPressed: () {},
+                          onPressed: () {
+
+                          loginProvider.loginGmailInit();
+
+                          },
                           icon: Image.asset('assets/ic_google.png', height: 24, width: 24),
                           label: const Text(
                             'continuar con google',
@@ -152,6 +156,8 @@ class NewLoginScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             side: const BorderSide(color: Colors.black12),
                           ),
+
+                          
                         ),
 
                         const SizedBox(height: 40),

@@ -75,4 +75,11 @@ class LoginProvider with ChangeNotifier {
     _obscurePassword = !_obscurePassword;
     notifyListeners();
   }
+
+
+  void loginGmailInit(){
+
+_errorMessage = 'Prueba';
+
+  }
 }
