@@ -6,7 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:app_salud_citas/vistas/NewLoginScreen.dart';
 import 'package:app_salud_citas/providers/login_provider.dart';
 
-void main() {
+void main() async {
+
+
+  
   runApp(
     MultiProvider(
       providers: [
