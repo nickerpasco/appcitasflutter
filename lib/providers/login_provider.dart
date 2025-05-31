@@ -1,3 +1,4 @@
+import 'package:app_salud_citas/utils/UIHelper.dart';
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/services/auth_service.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
@@ -17,13 +18,24 @@ class LoginProvider with ChangeNotifier {
   LoginResponse? get loginResponse => _loginResponse;
 
   /// Realiza login con validación de campos vacíos
-  Future<bool> login() async {
+  Future<bool> login(BuildContext context) async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      _errorMessage = 'Por favor ingrese correo y contraseña.';
-      notifyListeners();
+      //_errorMessage = 'Por favor ingrese correo y contraseña.';
+
+    
+  
+        UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Atención',
+        mensaje: 'Por favor ingrese correo y contraseña.' ,
+        icono: Icons.error_outline,
+        colorIcono: Colors.orange,
+        );
+
+      // notifyListeners();
       return false;
     }
 
@@ -45,7 +57,17 @@ class LoginProvider with ChangeNotifier {
         notifyListeners();
         return true;
       } else {
-        _errorMessage = 'Credenciales inválidas o servicio no disponible';
+        //_errorMessage = 'Credenciales inválidas o servicio no disponible';
+
+        UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Error',
+        mensaje: 'Credenciales inválidas o servicio no disponible' ,
+        icono: Icons.error_outline,
+        colorIcono: Colors.redAccent,
+        );
+
+
       }
     } catch (e) {
       _errorMessage = 'Error de red: $e';

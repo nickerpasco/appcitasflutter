@@ -1,10 +1,66 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class ArchivoScreen extends StatelessWidget {
+import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../providers/cliente_foto_provider.dart';
+
+class ArchivoScreen extends StatefulWidget {
   const ArchivoScreen({super.key});
 
   @override
+  State<ArchivoScreen> createState() => _ArchivoScreenState();
+}
+
+class _ArchivoScreenState extends State<ArchivoScreen> {
+  String _nombreUsuario = 'Sin Nombre';
+  String _apellidoPuser = 'Sin Ap Pat.';
+  String _apellidoMuser = 'Sin Ap Mat.';
+  String _nombreCompleto = '';
+  String _fechaNacFormated = '';
+
+  Future<void> cargarNombreUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      final data = LoginResponse.fromJson(jsonDecode(json));
+      setState(() {
+        _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+        _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
+        _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
+        _nombreCompleto = _nombreUsuario + " " + _apellidoPuser + " " +_apellidoMuser;
+        //FechaNacimiento
+        final nacimiento = DateTime.parse(data.data?.persona?.fechaNacimiento ?? DateTime.now().toString() );
+        final hoy = DateTime.now();
+
+        int anos = hoy.year - nacimiento.year;
+        int meses = hoy.month - nacimiento.month;
+
+        if (meses < 0 || (meses == 0 && hoy.day < nacimiento.day)) {
+          anos--;
+          meses += 12;
+        }
+
+        _fechaNacFormated = '$anos años y $meses meses';
+
+
+      });
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ClienteFotoProvider>(context, listen: false).cargarFotos();
+      cargarNombreUsuario();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final fotoProvider = Provider.of<ClienteFotoProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -21,31 +77,25 @@ class ArchivoScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-                  // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Icon(Icons.menu, color: Colors.black),
-                      Image.asset(
-                        'assets/drLink.png',
-                        height: 32,
-                      ),
+                      Image.asset('assets/drLink.png', height: 32),
                       const Icon(Icons.call, color: Colors.black),
                     ],
                   ),
                   const SizedBox(height: 20),
-
                   const CircleAvatar(
                     radius: 40,
                     backgroundImage: AssetImage('assets/doctor.png'),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Roxana Jara Molinma',
+                  Text('$_nombreCompleto',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const Text('0 Años Y 4 Meses  |  WhatsApp',
+                  Text('$_fechaNacFormated  |  WhatsApp',
                       style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 16),
-
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -62,56 +112,59 @@ class ArchivoScreen extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
-                          _TabButton(label: 'H. Médico', selected: true),
-                          const SizedBox(width: 8),
+                        children: const [
+                          _TabButton(label: 'H. Médico'),
+                          SizedBox(width: 8),
                           _TabButton(label: 'Recetas'),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           _TabButton(label: 'Historial'),
-                          const SizedBox(width: 8),
-                          _TabButton(label: 'Archivos'),
+                          SizedBox(width: 8),
+                          _TabButton(label: 'Archivos', selected: true),
                         ],
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text('Archivos Digitales',
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
-
                   const SizedBox(height: 12),
-
                   Expanded(
-                    child: GridView.builder(
+                    child: fotoProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : fotoProvider.fotos.isEmpty
+                        ? const Center(child: Text('No hay imágenes disponibles.'))
+                        : GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
                         childAspectRatio: 0.9,
                       ),
-                      itemCount: 4,
-                      itemBuilder: (context, index) => Column(
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.asset(
-                                'assets/doctor.png',
-                                fit: BoxFit.cover,
-                                width: double.infinity,
+                      itemCount: fotoProvider.fotos.length,
+                      itemBuilder: (context, index) {
+                        final foto = fotoProvider.fotos[index];
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  foto.url,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          const Text('Acne', style: TextStyle(fontSize: 13))
-                        ],
-                      ),
+                            const SizedBox(height: 4),
+                            const Text('Imagen', style: TextStyle(fontSize: 13))
+                          ],
+                        );
+                      },
                     ),
                   ),
-
                   const SizedBox(height: 16),
                 ],
               ),

@@ -1,10 +1,45 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class MenuClinicasPage extends StatelessWidget {
+import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:app_salud_citas/providers/EspecialidadProvider.dart';
+import 'package:app_salud_citas/models/especialidad.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class MenuClinicasPage extends StatefulWidget {
   const MenuClinicasPage({super.key});
 
   @override
+  State<MenuClinicasPage> createState() => _MenuClinicasPageState();
+}
+
+
+
+class _MenuClinicasPageState extends State<MenuClinicasPage> {
+  String _nombreUsuario = 'Sin Nombre';
+
+  Future<void> cargarNombreUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      final data = LoginResponse.fromJson(jsonDecode(json));
+      setState(() {
+        _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+      });
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<EspecialidadProvider>(context, listen: false).fetchEspecialidades();
+    cargarNombreUsuario();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final especialidadProvider = Provider.of<EspecialidadProvider>(context);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -25,25 +60,20 @@ class MenuClinicasPage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Icon(Icons.menu, color: Colors.black),
-                      Image.asset(
-                        'assets/drLink.png',
-                        height: 32,
-                      ),
+                      Image.asset('assets/drLink.png', height: 32),
                       const Icon(Icons.call, color: Colors.black),
                     ],
                   ),
                   const SizedBox(height: 20),
 
                   // Avatar y saludo
-                  Center(
-                    child: CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/doctor.png'),
-                    ),
+                  const CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage('assets/doctor.png'),
                   ),
                   const SizedBox(height: 12),
-                  const Text('Hola , Cristopher',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('Hola, $_nombreUsuario',
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   const Text('¿Cómo puedo ayudarte hoy?',
                       style: TextStyle(color: Colors.black)),
                   const SizedBox(height: 20),
@@ -54,10 +84,7 @@ class MenuClinicasPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF5CFCCC),
-                        width: 1.5,
-                      ),
+                      border: Border.all(color: const Color(0xFF5CFCCC), width: 1.5),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.1),
@@ -66,12 +93,24 @@ class MenuClinicasPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const TextField(
-                      decoration: InputDecoration(
-                        icon: Icon(Icons.search),
-                        hintText: 'Search',
-                        border: InputBorder.none,
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: especialidadProvider.searchController,
+                            decoration: const InputDecoration(
+                              hintText: 'Buscar especialidad...',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () {
+                            especialidadProvider.buscarEspecialidades();
+                          },
+                        )
+                      ],
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -87,14 +126,15 @@ class MenuClinicasPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-
                   // Notificación de cita
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.only(bottom: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Color(0xFF5CFCCC), width: 1.5),
+                      border: Border.all(color: const Color(0xFF5CFCCC), width: 1.5),
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,7 +149,7 @@ class MenuClinicasPage extends StatelessWidget {
                         ),
                         SizedBox(height: 6),
                         Text(
-                          'Usted tiene una cita  en la sucursal de Miraflores\na las 03:18 pm del 25/04/2025',
+                          'Usted tiene una cita en la sucursal de Miraflores\na las 03:18 pm del 25/04/2025',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.black87,
@@ -119,51 +159,51 @@ class MenuClinicasPage extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-
-                  // Título lista de doctores
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text('Dr. Shen',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  // Lista scrollable de doctores
+                  // Lista de doctores por especialidad
                   Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.only(top: 8),
-                      children: [
-                        _DoctorCard(
-                          name: 'Dr. Shen',
-                          specialty: 'Cardiólogo y Cirujano',
-                          location: 'Miraflores, cdra25',
+                    child: especialidadProvider.isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : especialidadProvider.especialidades.isEmpty
+                        ? const Center(
+                      child: Text(
+                        'No se encontraron especialidades disponibles.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black54,
                         ),
-                        _DoctorCard(
-                          name: 'Dr. Shon',
-                          specialty: 'Dentista general',
-                          location: 'Miraflores, cdra25',
-                        ),
-                        _DoctorCard(
-                          name: 'Dr. Shon',
-                          specialty: 'Dentista general',
-                          location: 'Miraflores, cdra25',
-                        ),
-                        _DoctorCard(
-                          name: 'Dr. Shon',
-                          specialty: 'Dentista general',
-                          location: 'Miraflores, cdra25',
-                        ),
-                        _DoctorCard(
-                          name: 'Dr. Shon',
-                          specialty: 'Dentista general',
-                          location: 'Miraflores, cdra25',
-                        ),
-                      ],
+                      ),
+                    )
+                        : ListView.builder(
+                      padding: const EdgeInsets.only(top: 8),
+                      itemCount: especialidadProvider.especialidades.length,
+                      itemBuilder: (context, index) {
+                        final especialidad = especialidadProvider.especialidades[index];
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              especialidad.especialidad ?? 'Sin nombre',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            ...especialidad.empleados.map(
+                                  (e) => _DoctorCard(
+                                name: e.empleado ?? 'Desconocido',
+                                specialty: especialidad.especialidad ?? '',
+                                location: 'Sucursal no especificada',
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                          ],
+                        );
+                      },
                     ),
                   ),
+
                 ],
               ),
             ),
@@ -233,26 +273,15 @@ class _DoctorCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Color(0xFF4B2C20),
-                  ),
-                ),
-                Text(
-                  specialty,
-                  style: const TextStyle(fontSize: 14),
-                ),
+                Text(name,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF4B2C20))),
+                Text(specialty, style: const TextStyle(fontSize: 14)),
                 Row(
                   children: [
                     const Icon(Icons.location_on, color: Colors.green, size: 16),
                     const SizedBox(width: 4),
-                    Text(
-                      location,
-                      style: const TextStyle(fontSize: 13),
-                    ),
+                    Text(location, style: const TextStyle(fontSize: 13)),
                   ],
                 ),
               ],
@@ -263,10 +292,7 @@ class _DoctorCard extends StatelessWidget {
             children: const [
               Icon(Icons.star, color: Colors.amber, size: 18),
               SizedBox(width: 4),
-              Text(
-                '4.9',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              Text('4.9', style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           )
         ],
