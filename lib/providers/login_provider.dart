@@ -1,7 +1,9 @@
 import 'package:app_salud_citas/utils/UIHelper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/services/auth_service.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -99,9 +101,31 @@ class LoginProvider with ChangeNotifier {
   }
 
 
-  void loginGmailInit(){
+   Future<void> loginGmailInit() async {
+    try {
+      // isLoading = true;
+      // notifyListeners();
 
-_errorMessage = 'Prueba';
+      final googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        //errorMessage = "Inicio de sesión cancelado";
+        return;
+      }
 
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      //errorMessage = e.message ?? "Error al iniciar sesión con Google";
+    } catch (e) {
+      //errorMessage = "Error inesperado al iniciar sesión con Google";
+    } finally {
+      // isLoading = false;
+      // notifyListeners();
+    }
   }
 }

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "390779103435",
+    "project_id": "doctorlink-1f8b5",
+    "storage_bucket": "doctorlink-1f8b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:390779103435:android:d4955595e2d3c71031534e",
+        "android_client_info": {
+          "package_name": "com.drlink.app_salud_citas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "390779103435-l60jt6kfsbp81cqn494b2kh90p60qamh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.drlink.app_salud_citas",
+            "certificate_hash": "bc3475fd1e90c98873ec80d07e68e2152dfa047e"
+          }
+        },
+        {
+          "client_id": "390779103435-2aahacsn0oiqfdqjoeo14dkh62dvvtal.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUAZakxEvGjgpVLO0YVvb1-vWtFMzEe5k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "390779103435-2aahacsn0oiqfdqjoeo14dkh62dvvtal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
