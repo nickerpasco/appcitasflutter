@@ -2,11 +2,16 @@ import 'dart:convert';
 
 import 'package:app_salud_citas/controllers/CitaController.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/utils/NavigationHelper.dart';
+import 'package:app_salud_citas/utils/UIHelper.dart';
+import 'package:app_salud_citas/vistas/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/horario_provider.dart';
+
+import 'main_screen.dart';
 
 class AgendarCitaScreen extends StatefulWidget {
   final String nombreDoctor;
@@ -40,7 +45,9 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   String _apellidoPuser = 'Sin Ap Pat.';
   String _apellidoMuser = 'Sin Ap Mat.';
   String _nombreCompleto = '';
+  String horaString ='';
   String _fechaNacFormated = '';
+  int idCliente = 0;
 
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
@@ -51,6 +58,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
         _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
         _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
+        idCliente =   data.data?.pacienteEmpresa?.first.idCliente ?? 0;
         _nombreCompleto = _nombreUsuario + " " + _apellidoPuser + " " +_apellidoMuser;
         //FechaNacimiento
         final nacimiento = DateTime.parse(data.data?.persona?.fechaNacimiento ?? DateTime.now().toString() );
@@ -231,6 +239,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                                       selectedColor: const Color(0xFF2E687A),
                                       onSelected: isDisabled ? null : (_) {
                                         provider.setHora(hora);
+                                        this.horaString = hora;
                                       },
                                       disabledColor: Colors.grey.shade300,
                                     );
@@ -280,9 +289,12 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                               onPressed: () {
                                 final valido = provider.validarFormulario();
                                 if (valido) {
-                                  // Lógica de agendamiento aquí
+                                
+                                this._EnviaragendarCita();
+                                }else{
+ 
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Cita agendada correctamente")),
+                                    const SnackBar(content: Text("Formulario invalido")),
                                   );
                                 }
                               },
@@ -318,7 +330,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
 
 
 
-    void agendarCita() async {
+    void _EnviaragendarCita() async {
 
 
 
@@ -337,13 +349,38 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
     final result = await controller.agendarCita(payload);
 
     if (result['success']) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Cita agendada correctamente")),
-      );
+
+  NavigationHelper.navegarYReemplazar(context, MainScreen());
+
+        
+        UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Exito',
+        mensaje: 'Cita creada correctamente...' ,
+        icono: Icons.done_outline_rounded,
+        colorIcono: Colors.green,
+        );
+
+
+
+    
+
+       
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("❌ Error: ${result['error']}")),
-      );
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text("❌ Error: ${result['error']}")),
+      // );
+
+
+  UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Error',
+        mensaje: 'Error: ${result['error']}' ,
+        icono: Icons.error_outline,
+        colorIcono: Colors.redAccent,
+        );
+
+
     }
   }
 
@@ -351,28 +388,39 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
 
   
   Map<String, dynamic> armarPayload() {
+
+
+ print(selectedDate);
+
+ print(horaString);
+
+DateTime fecha = selectedDate;
+String fechaFormateada = fecha.toIso8601String().split('.').first;
+
+String horaSinAmPm = horaString.replaceAll(RegExp(r'\s?(AM|PM)', caseSensitive: false), '');
+
     return {
       "CitaDto": {
         "Cita": {
-          "id_cliente": 12,
-          "id_empleado": 5,
+          "id_cliente": idCliente,
+          "id_empleado": widget.idEmpleado,
           "id_motivo": null,
-          "id_especialidad": 3,
+          "id_especialidad": widget.idEspecialidad,
           "horaDuracion": 1,
           "minutosDuracion": 30,
-          "fechaInicio": "2025-04-25T15:00:00",
-          "horaInicio": "15:00:00",
+          "fechaInicio": fechaFormateada,
+          "horaInicio": horaSinAmPm,
           "id_consultorio": null,
           "id_frecuencia": null,
-          "nota": "Paciente con antecedentes",
+          "nota": "",
           "estadoCitaMedica": 1,
           "app_nombre": "app_nombre",
           "app_codigo_pais": "+51",
-          "app_telefono": "993430563",
-          "end": "2025-04-25T15:00:00",
-          "start": "2025-04-25T15:00:00",
-          "app_comentario": "comentario",
-          "nombre_completo": "nombre usuario logeado"
+          "app_telefono": telefonoController.text,
+          "end": fechaFormateada,
+          "start": fechaFormateada,
+          "app_comentario": comentarioController.text,
+          "nombre_completo": _nombreCompleto
         },
         "citaServicio": [
           {"id_servicio": 10}
@@ -384,11 +432,11 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         "summary": "Reunion Skin Center - Sala 2",
         "location": "Av. Alfredo Benavides 1335, Miraflores 15047",
         "start": {
-          "dateTime": "2025-04-25T15:00:00",
+          "dateTime": fechaFormateada,
           "timeZone": "America/Lima"
         },
         "end": {
-          "dateTime": "2025-04-25T16:30:00",
+          "dateTime": fechaFormateada,
           "timeZone": "America/Lima"
         },
         "Attendees": [

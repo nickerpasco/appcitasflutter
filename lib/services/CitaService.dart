@@ -3,18 +3,29 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:app_salud_citas/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:shared_preferences/shared_preferences.dart';
 class CitaService {
   // final String baseUrl;
 
 
     final baseUrl = Uri.parse('${ApiConstants.baseUrl}');
 
+ 
 
   // CitaService({required this.baseUrl});
 
   Future<Map<String, dynamic>> enviarCita(Map<String, dynamic> payload) async {
-    final url = Uri.parse('$baseUrl/secengine/auth/login-paciente');
+
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token') ?? '';
+
+
+    final url = Uri.parse('$baseUrl/Citas/create-app-calendar');
+
+  var jsonData = jsonEncode(payload);
+
+ print(jsonData);
 
     try {
       final response = await http
@@ -22,8 +33,9 @@ class CitaService {
             url,
             headers: {
               HttpHeaders.contentTypeHeader: 'application/json',
+                 'Authorization': 'Bearer $token',
             },
-            body: jsonEncode(payload),
+            body: jsonData,
           )
           .timeout(const Duration(seconds: 15)); // timeout de 15s
 
