@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 
-
+ 
 
 android {
     namespace = "com.drlink.app_salud_citas"

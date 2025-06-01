@@ -102,30 +102,29 @@ class LoginProvider with ChangeNotifier {
 
 
    Future<void> loginGmailInit() async {
-    try {
-      // isLoading = true;
-      // notifyListeners();
+    
+ try {
+    // 1. Inicia el flujo de autenticación
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      final googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        //errorMessage = "Inicio de sesión cancelado";
-        return;
-      }
+    // 2. Obtiene los detalles de autenticación del usuario
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-      final googleAuth = await googleUser.authentication;
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
+    // 3. Crea una nueva credencial
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-    } on FirebaseAuthException catch (e) {
-      //errorMessage = e.message ?? "Error al iniciar sesión con Google";
-    } catch (e) {
-      //errorMessage = "Error inesperado al iniciar sesión con Google";
-    } finally {
-      // isLoading = false;
-      // notifyListeners();
-    }
+    // 4. Inicia sesión en Firebase con la credencial
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+    // 5. Imprime el nombre del usuario
+    print(userCredential.user?.displayName);
+  } catch (e) {
+    print("Error al iniciar sesión con Google: $e");
+  }
+
+
   }
 }
