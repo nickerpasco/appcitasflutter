@@ -19,6 +19,7 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
   String _apellidoMuser = 'Sin Ap Mat.';
   String _nombreCompleto = '';
   String _fechaNacFormated = '';
+  String urlImg = '';
 
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
@@ -26,6 +27,8 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
     if (json != null) {
       final data = LoginResponse.fromJson(jsonDecode(json));
       setState(() {
+        //url
+        urlImg=data.data?.urlPublic ?? '';
         _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
         _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
         _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
@@ -152,7 +155,7 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(8),
                                 child: Image.network(
-                                  foto.url,
+                                  urlImg+foto.url,
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                 ),
