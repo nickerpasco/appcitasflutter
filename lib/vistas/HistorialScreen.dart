@@ -1,7 +1,68 @@
+import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/vistas/componentes/foto_ui.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
-class HistorialScreen extends StatelessWidget {
+// Asegúrate de tener tu clase LoginResponse definida correctamente
+// import 'tu_modelo.dart';
+
+class HistorialScreen extends StatefulWidget {
   const HistorialScreen({super.key});
+
+  @override
+  State<HistorialScreen> createState() => _HistorialScreenState();
+}
+
+class _HistorialScreenState extends State<HistorialScreen> {
+  String _nombreUsuario = 'Sin Nombre';
+  String _apellidoPuser = 'Sin Ap Pat.';
+  String _apellidoMuser = 'Sin Ap Mat.';
+  String _nombreCompleto = '';
+  String _fechaNacFormated = '';
+
+     String urlConFoto = '';
+    String _primerNombre = '';
+    String _primerapellido = '';
+
+  @override
+  void initState() {
+    super.initState();
+    cargarNombreUsuario();
+  }
+
+  Future<void> cargarNombreUsuario() async {
+    final prefs = await SharedPreferences.getInstance();
+      final jsonUrlImagen = prefs.getString('urlImagenUsuarioLogin');
+
+    urlConFoto = jsonUrlImagen.toString();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      final data = LoginResponse.fromJson(jsonDecode(json));
+      setState(() {
+        _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+        _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
+        _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
+        _nombreCompleto =
+            '$_nombreUsuario $_apellidoPuser $_apellidoMuser';
+
+      _primerNombre = data.data?.persona?.nombre ?? '';
+        _primerapellido = data.data?.persona?.apellidoPaterno ?? '';
+
+        final nacimiento = DateTime.tryParse(data.data?.persona?.fechaNacimiento ?? '');
+        if (nacimiento != null) {
+          final hoy = DateTime.now();
+          int anos = hoy.year - nacimiento.year;
+          int meses = hoy.month - nacimiento.month;
+          if (meses < 0 || (meses == 0 && hoy.day < nacimiento.day)) {
+            anos--;
+            meses += 12;
+          }
+          _fechaNacFormated = '$anos años y $meses meses';
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +81,6 @@ class HistorialScreen extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  // Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -33,18 +93,20 @@ class HistorialScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 20),
-
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/doctor.png'),
+                   // const CircleAvatar(radius: 40, backgroundImage: AssetImage('assets/doctor.png')),
+                     foto_ui(
+                    imageUrl: urlConFoto,
+                    firstName: _primerNombre,
+                    lastName: _primerapellido,
+                    radius: 50,
                   ),
                   const SizedBox(height: 12),
-                  const Text('Roxana Jara Molinma',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const Text('0 Años Y 4 Meses  |  WhatsApp',
-                      style: TextStyle(color: Colors.grey)),
+                  Text(_nombreCompleto,
+                      style:
+                          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text('$_fechaNacFormated  |  WhatsApp',
+                      style: const TextStyle(color: Colors.grey)),
                   const SizedBox(height: 16),
-
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -61,21 +123,19 @@ class HistorialScreen extends StatelessWidget {
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: [
+                        children: const [
                           _TabButton(label: 'H. Médico'),
-                          const SizedBox(width: 8),
-                          _TabButton(label: 'Recetas'),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
+                          _TabButton(label: 'Procedimientos'),
+                          SizedBox(width: 8),
                           _TabButton(label: 'Historial', selected: true),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           _TabButton(label: 'Archivos'),
                         ],
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
                   Expanded(
                     child: ListView.builder(
                       itemCount: 3,
@@ -88,12 +148,13 @@ class HistorialScreen extends StatelessWidget {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Expanded(
+                          children: const [
+                            Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('HISTORIALES Nº 1152539874', style: TextStyle(fontWeight: FontWeight.bold)),
+                                  Text('HISTORIALES Nº 1152539874',
+                                      style: TextStyle(fontWeight: FontWeight.bold)),
                                   SizedBox(height: 4),
                                   Text('Médico: MIKEY THOMPSSON HUGARTE'),
                                   Text('C. Asistencial: H.N. EDGARDO REBAGLIATI'),
@@ -101,9 +162,9 @@ class HistorialScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            const CircleAvatar(
-                              backgroundColor: const Color(0xFF2E687A),
+                            SizedBox(width: 8),
+                            CircleAvatar(
+                              backgroundColor: Color(0xFF2E687A),
                               child: Icon(Icons.arrow_forward, color: Colors.white),
                             )
                           ],
@@ -111,7 +172,6 @@ class HistorialScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 16),
                 ],
               ),

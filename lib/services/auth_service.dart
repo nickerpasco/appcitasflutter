@@ -28,13 +28,19 @@ class AuthService {
         // Obtener token del header
         final token = response.headers['token'] ?? '';
 
-        return LoginResult(response: loginResponse, token: token);
+        return LoginResult(response: loginResponse, token: token, message:  "OK");
       } else {
-        return null;
+      final loginResponse = null;
+      final token = null;
+      return LoginResult(response: loginResponse, token: token, message:  'Error al iniciar sesión: status: $response.statusCode');
+
+        // return null;
       }
     } catch (e) {
       print('Error en login: $e');
-      return null;
+     final loginResponse = null;
+      final token = null;
+      return LoginResult(response: loginResponse, token: token, message:  "Error en login: $e'");
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_salud_citas/constants/api_constants.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
 import 'package:app_salud_citas/models/unavailable_time_response.dart';
 import 'package:http/http.dart' as http;
@@ -21,10 +22,14 @@ class HorarioService {
     //final idCliente = 13;
     final idUneg = loginResponse.data?.pacienteEmpresa?.first.idUneg ?? 0;
 
-    final url = Uri.parse(
-      'https://web-doctorlink-service.itbcpwebservices.com/Citas/unavailable-time?fechaInicio=$fecha&id_uneg=$idUneg&id_empleado=$idEmpleado',
-      //'https://web-doctorlink-service.itbcpwebservices.com/Citas/unavailable-time?fechaInicio=$fecha&id_uneg=1&id_empleado=74',
-    );
+
+  final url = Uri.parse('${ApiConstants.baseUrl}/Citas/unavailable-time?fechaInicio=$fecha&id_uneg=$idUneg&id_empleado=$idEmpleado');
+
+
+    // final url = Uri.parse(
+    //   'https://web-doctorlink-service.itbcpwebservices.com/Citas/unavailable-time?fechaInicio=$fecha&id_uneg=$idUneg&id_empleado=$idEmpleado',
+    //   //'https://web-doctorlink-service.itbcpwebservices.com/Citas/unavailable-time?fechaInicio=$fecha&id_uneg=1&id_empleado=74',
+    // );
 
     final response = await http.get(url, headers: {
       'Content-Type': 'application/json',

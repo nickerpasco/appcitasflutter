@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/vistas/componentes/foto_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,8 +22,15 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
   String _fechaNacFormated = '';
   String urlImg = '';
 
+    String urlConFoto = '';
+    String _primerNombre = '';
+    String _primerapellido = '';
+
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
+      final jsonUrlImagen = prefs.getString('urlImagenUsuarioLogin');
+
+    urlConFoto = jsonUrlImagen.toString();
     final json = prefs.getString('user_data');
     if (json != null) {
       final data = LoginResponse.fromJson(jsonDecode(json));
@@ -33,6 +41,12 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
         _apellidoPuser = data.data?.persona?.apellidoPaterno ?? '';
         _apellidoMuser = data.data?.persona?.apellidoMaterno ?? '';
         _nombreCompleto = _nombreUsuario + " " + _apellidoPuser + " " +_apellidoMuser;
+
+
+
+        _primerNombre = data.data?.persona?.nombre ?? '';
+        _primerapellido = data.data?.persona?.apellidoPaterno ?? '';
+
         //FechaNacimiento
         final nacimiento = DateTime.parse(data.data?.persona?.fechaNacimiento ?? DateTime.now().toString() );
         final hoy = DateTime.now();
@@ -89,9 +103,11 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/doctor.png'),
+               foto_ui(
+                    imageUrl: urlConFoto,
+                    firstName: _primerNombre,
+                    lastName: _primerapellido,
+                    radius: 50,
                   ),
                   const SizedBox(height: 12),
                   Text('$_nombreCompleto',
@@ -118,7 +134,7 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                         children: const [
                           _TabButton(label: 'H. Médico'),
                           SizedBox(width: 8),
-                          _TabButton(label: 'Recetas'),
+                          _TabButton(label: 'Procedimientos'),
                           SizedBox(width: 8),
                           _TabButton(label: 'Historial'),
                           SizedBox(width: 8),
@@ -162,7 +178,7 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                               ),
                             ),
                             const SizedBox(height: 4),
-                            const Text('Imagen', style: TextStyle(fontSize: 13))
+                            // const Text('Imagen', style: TextStyle(fontSize: 13))
                           ],
                         );
                       },

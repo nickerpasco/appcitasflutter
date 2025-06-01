@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_salud_citas/models/LoginResponse.dart';
 import 'package:app_salud_citas/vistas/AgendarCitaScreen.dart';
+import 'package:app_salud_citas/vistas/componentes/foto_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_salud_citas/providers/EspecialidadProvider.dart';
@@ -19,14 +20,34 @@ class MenuClinicasPage extends StatefulWidget {
 
 class _MenuClinicasPageState extends State<MenuClinicasPage> {
   String _nombreUsuario = 'Sin Nombre';
+  String _primerNombre = '';
+  String _primerapellido = '';
+
+   // Ejemplos de URLs para probar:
+
+
+
+
+
+ String urlConFoto = '';
+ 
 
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
+    final jsonUrlImagen = prefs.getString('urlImagenUsuarioLogin');
+
+    urlConFoto = jsonUrlImagen.toString();
+  
+
     final json = prefs.getString('user_data');
     if (json != null) {
       final data = LoginResponse.fromJson(jsonDecode(json));
       setState(() {
         _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+
+        _primerNombre = data.data?.persona?.nombre ?? '';
+        _primerapellido = data.data?.persona?.apellidoPaterno ?? '';
+  
       });
     }
   }
@@ -69,10 +90,19 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
                   const SizedBox(height: 20),
 
                   // Avatar y saludo
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/doctor.png'),
+                  // const CircleAvatar(
+                  //   radius: 40,
+                  //   backgroundImage: AssetImage('assets/doctor.png'),
+                  // ),
+
+  
+                    foto_ui(
+                    imageUrl: urlConFoto,
+                    firstName: _primerNombre,
+                    lastName: _primerapellido,
+                    radius: 50,
                   ),
+
                   const SizedBox(height: 12),
                   Text('Hola, $_nombreUsuario',
                       style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
@@ -319,3 +349,4 @@ class _DoctorCard extends StatelessWidget {
     );
   }
 }
+

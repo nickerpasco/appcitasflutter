@@ -50,10 +50,14 @@ class LoginProvider with ChangeNotifier {
       if (result  != null) {
         _loginResponse = result.response;
 
+        var json  =  jsonEncode(result.response.toJson());
         // Guardar en SharedPreferences
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', result.token);
         await prefs.setString('user_data', jsonEncode(result.response.toJson()));
+
+
+        SetearImagenLogin(json);
 
         _isLoading = false;
         notifyListeners();
@@ -72,7 +76,19 @@ class LoginProvider with ChangeNotifier {
 
       }
     } catch (e) {
-      _errorMessage = 'Error de red: $e';
+      //_errorMessage = 'Error de red: $e';
+
+
+        UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Error',
+        mensaje: 'Error interno : $e' ,
+        icono: Icons.error_outline,
+        colorIcono: Colors.redAccent,
+        );
+
+
+
     }
 
     _isLoading = false;
@@ -88,6 +104,37 @@ class LoginProvider with ChangeNotifier {
   void disposeControllers() {
     emailController.dispose();
     passwordController.dispose();
+  }
+
+ 
+
+
+    Future<void> SetearImagenLogin(String json) async {
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      final data = LoginResponse.fromJson(jsonDecode(json));
+      
+
+      String     fotoContain = "";
+      String _nombreUsuario = data.data?.persona?.nombre ?? 'Usuario';
+
+      String  _primerNombre = data.data?.persona?.nombre ?? '';
+      String  _primerapellido = data.data?.persona?.apellidoPaterno ?? '';
+      String  urlConFoto = data.data?.urlPublic?? '';
+ 
+        data?.data?.pacienteEmpresa?.forEach((pacienteEmpresa) {
+          fotoContain = pacienteEmpresa.cliente?.urlFoto?? '';
+            
+        }); 
+    
+
+      urlConFoto  = urlConFoto+fotoContain;
+
+     await prefs.setString('urlImagenUsuarioLogin', urlConFoto);
+
+
+    }
   }
 
 

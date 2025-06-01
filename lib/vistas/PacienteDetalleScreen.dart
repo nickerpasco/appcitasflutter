@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/vistas/componentes/foto_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_salud_citas/providers/anamnesis_provider.dart';
@@ -22,8 +23,15 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
   String _nombreCompleto = '';
   String _fechaNacFormated = '';
 
+    String urlConFoto = '';
+    String _primerNombre = '';
+    String _primerapellido = '';
+
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
+      final jsonUrlImagen = prefs.getString('urlImagenUsuarioLogin');
+
+    urlConFoto = jsonUrlImagen.toString();
     final json = prefs.getString('user_data');
     if (json != null) {
       final data = LoginResponse.fromJson(jsonDecode(json));
@@ -35,6 +43,9 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
         //FechaNacimiento
         final nacimiento = DateTime.parse(data.data?.persona?.fechaNacimiento ?? DateTime.now().toString() );
         final hoy = DateTime.now();
+
+          _primerNombre = data.data?.persona?.nombre ?? '';
+        _primerapellido = data.data?.persona?.apellidoPaterno ?? '';
 
         int anos = hoy.year - nacimiento.year;
         int meses = hoy.month - nacimiento.month;
@@ -89,9 +100,11 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
 
                   const SizedBox(height: 20),
 
-                  const CircleAvatar(
-                    radius: 40,
-                    backgroundImage: AssetImage('assets/doctor.png'),
+                  foto_ui(
+                    imageUrl: urlConFoto,
+                    firstName: _primerNombre,
+                    lastName: _primerapellido,
+                    radius: 50,
                   ),
                   const SizedBox(height: 12),
                   Text('$_nombreCompleto',
@@ -120,7 +133,7 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                         children: [
                           _TabButton(label: 'H. Médico', selected: true),
                           const SizedBox(width: 8),
-                          _TabButton(label: 'Recetas'),
+                          _TabButton(label: 'Procedimientos'),
                           const SizedBox(width: 8),
                           _TabButton(label: 'Historial'),
                           const SizedBox(width: 8),
@@ -166,7 +179,7 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                                       Text(a.motivoConsulta ?? ''),
                                       const SizedBox(height: 8),
                                       const Text('Resultado de estudios', style: TextStyle(fontWeight: FontWeight.bold)),
-                                      Text(a.examenesAuxiliares ?? ''),
+                                      Text(a.examenFisicoMental ?? ''),
                                       const SizedBox(height: 8),
                                       const Text('Diagnóstico', style: TextStyle(fontWeight: FontWeight.bold)),
                                       Text(a.diagnostico ?? ''),
@@ -195,9 +208,9 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text('Resultados de laboratorio', style: TextStyle(fontWeight: FontWeight.bold)),
-                                        Text(a.nombreCompletoDoctor ?? ''),
-                                        Text(a.nombreCompletoDoctor ?? ''),
+                                        const Text('Tratamientos', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        Text(a.tratamientos ?? ''),
+                                        // Text(a.nombreCompletoDoctor ?? ''),
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: Text(

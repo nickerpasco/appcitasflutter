@@ -1,4 +1,6 @@
 
+import 'dart:ffi';
+
 class LoginResponse {
   final Data? data;
   final String? token;
@@ -7,6 +9,7 @@ class LoginResponse {
   final dynamic user;
   final dynamic roles;
   final dynamic menus;
+
 
   LoginResponse({this.data, this.token, this.v1, this.v2, this.user, this.roles, this.menus});
 
@@ -74,10 +77,10 @@ class Data {
     id: json['id'],
     image: json['image'],
     documentNumber: json['documentNumber'],
-    roles: json['roles'],
-    empresas: json['empresas'],
-    menus: json['menus'],
-    entities: json['entities'],
+    roles: json['roles'] ?? [],
+    empresas: json['empresas'] ?? [],
+    menus: json['menus'] ?? [],
+    entities: json['entities'] ?? [],
     pacienteEmpresa: (json['pacienteEmpresa'] as List?)?.map((e) => PacienteEmpresa.fromJson(e)).toList(),
     persona: json['persona'] != null ? Persona.fromJson(json['persona']) : null,
     entity: json['entity'] != null ? Entity.fromJson(json['entity']) : null,
@@ -111,6 +114,9 @@ class PacienteEmpresa {
   final String? userRegister;
   final String? fechaRegistro;
   final bool? estadoReg;
+  final Persona? persona;
+  final Empresa? empresa;
+  final dynamic? cliente;
 
   PacienteEmpresa({
     this.idPacienteEmpresa,
@@ -120,6 +126,9 @@ class PacienteEmpresa {
     this.userRegister,
     this.fechaRegistro,
     this.estadoReg,
+    this.persona,
+    this.empresa,
+    this.cliente,
   });
 
   factory PacienteEmpresa.fromJson(Map<String, dynamic> json) => PacienteEmpresa(
@@ -130,6 +139,11 @@ class PacienteEmpresa {
     userRegister: json['user_register'],
     fechaRegistro: json['fecha_registro'],
     estadoReg: json['estado_reg'],
+    persona: json['persona'] != null ? Persona.fromJson(json['persona']) : null,
+    empresa: json['empresa'] != null ? Empresa.fromJson(json['empresa']) : null,
+    cliente: json['cliente'] != null ? Cliente.fromJson(json['cliente']) : null,
+ 
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -140,7 +154,10 @@ class PacienteEmpresa {
     'user_register': userRegister,
     'fecha_registro': fechaRegistro,
     'estado_reg': estadoReg,
-  };
+    'persona': persona?.toJson(),
+    'empresa': empresa?.toJson(),
+    'cliente': cliente?.toJson(),
+  }; 
 }
 
 class Persona {
@@ -246,6 +263,136 @@ class Persona {
     'id_distrito': idDistrito,
   };
 }
+
+class Empresa {
+  final int? idUneg;
+  final String? ruc;
+  final String? razonSocial;
+  final String? direccion;
+  final String? image;
+  final String? color;
+  final String? video;
+  final bool? estadoReg;
+  final String? telefono;
+  final String? celular;
+  final String? emailRecepcion;
+  final String? brevePresentacion;
+  final String? paginaWeb;
+
+  Empresa({
+    this.idUneg,
+    this.ruc,
+    this.razonSocial,
+    this.direccion,
+    this.image,
+    this.color,
+    this.video,
+    this.estadoReg,
+    this.telefono,
+    this.celular,
+    this.emailRecepcion,
+    this.brevePresentacion,
+    this.paginaWeb,
+  });
+
+  factory Empresa.fromJson(Map<String, dynamic> json) => Empresa(
+    idUneg: json['idUneg'],
+    ruc: json['ruc'],
+    razonSocial: json['razonSocial'],
+    direccion: json['direccion'],
+    image: json['image'],
+    color: json['color'],
+    video: json['video'],
+    estadoReg: json['estado_reg'],
+    telefono: json['telefono'],
+    celular: json['celular'],
+    emailRecepcion: json['email_recepcion'],
+    brevePresentacion: json['breve_presentacion'],
+    paginaWeb: json['pagina_web'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'idUneg': idUneg,
+    'ruc': ruc,
+    'razonSocial': razonSocial,
+    'direccion': direccion,
+    'image': image,
+    'color': color,
+    'video': video,
+    'estado_reg': estadoReg,
+    'telefono': telefono,
+    'celular': celular,
+    'email_recepcion': emailRecepcion,
+    'breve_presentacion': brevePresentacion,
+    'pagina_web': paginaWeb,
+  };
+}
+
+ 
+
+
+class Cliente {
+  final int? idCliente;
+  final int? idPersona;
+  final String? urlFoto;
+  final DateTime? fechaRegistro;
+  final String? userRegister;
+  final DateTime? fechaModifica;
+  final String? userModifica;
+  final bool? estadoReg;
+  final int? idUneg;
+  final String? statusSaldoFavorDeuda;
+  final double? montoSaldo;
+
+  Cliente({
+    this.idCliente,
+    this.idPersona,
+    this.urlFoto,
+    this.fechaRegistro,
+    this.userRegister,
+    this.fechaModifica,
+    this.userModifica,
+    this.estadoReg,
+    this.idUneg,
+    this.statusSaldoFavorDeuda,
+    this.montoSaldo,
+  });
+
+  factory Cliente.fromJson(Map<String, dynamic> json) => Cliente(
+    idCliente: json['id_cliente'],
+    idPersona: json['id_persona'],
+    urlFoto: json['urlFoto'],
+    fechaRegistro: json['fecha_registro'] != null
+        ? DateTime.parse(json['fecha_registro'])
+        : null,
+    userRegister: json['user_register'],
+    fechaModifica: json['fecha_modifica'] != null
+        ? DateTime.tryParse(json['fecha_modifica'])
+        : null,
+    userModifica: json['user_modifica'],
+    estadoReg: json['estado_reg'],
+    idUneg: json['id_uneg'],
+    statusSaldoFavorDeuda: json['statusSaldoFavorDeuda'],
+    montoSaldo: json['montoSaldo'] != null
+        ? (json['montoSaldo'] as num).toDouble()
+        : null,
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id_cliente': idCliente,
+    'id_persona': idPersona,
+    'urlFoto': urlFoto,
+    'fecha_registro': fechaRegistro?.toIso8601String(),
+    'user_register': userRegister,
+    'fecha_modifica': fechaModifica?.toIso8601String(),
+    'user_modifica': userModifica,
+    'estado_reg': estadoReg,
+    'id_uneg': idUneg,
+    'statusSaldoFavorDeuda': statusSaldoFavorDeuda,
+    'montoSaldo': montoSaldo,
+  };
+}
+
 
 class Entity {
   final String? id;

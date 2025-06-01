@@ -1,9 +1,120 @@
-import 'package:flutter/material.dart';
-import 'package:app_salud_citas/vistas/menu_screen.dart';
-import 'package:app_salud_citas/vistas/main_screen.dart';
+import 'dart:convert';
 
-class SelectionUserScreen extends StatelessWidget {
+import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/utils/UIHelper.dart';
+import 'package:app_salud_citas/vistas/selectores/EmpresaSelectorApp.dart';
+import 'package:app_salud_citas/vistas/selectores/models/EmpresaModel.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
+import 'main_screen.dart';
+
+class SelectionUserScreen extends StatefulWidget {
   const SelectionUserScreen({super.key});
+
+  @override
+  State<SelectionUserScreen> createState() => _SelectionUserScreenState();
+}
+
+class _SelectionUserScreenState extends State<SelectionUserScreen> {
+  EmpresaModel? empresaSeleccionada;
+
+  
+
+
+  // This will hold the user data after loading from SharedPreferences
+  LoginResponse? userData;
+
+  @override
+  void initState() {
+    super.initState();
+  
+  }
+
+  // Method to load user data from SharedPreferences
+  Future<List<EmpresaModel>> _loadEmpresas() async {
+
+
+  List<EmpresaModel> empresas = []; 
+
+    final prefs = await SharedPreferences.getInstance();
+    final json = prefs.getString('user_data');
+    if (json != null) {
+      setState(() {
+        userData = LoginResponse.fromJson(jsonDecode(json));
+
+
+    // var todasLasEmpresas = userData?.data?.pacienteEmpresa
+    // ?.where((p) => p.empresa != null)
+    // .expand((p) => p.empresa!)
+    // .toList();
+
+      
+// Iterar sobre la lista de empresas recibidas del backend
+        // for (var i = 0; i < userData.data.pacienteEmpresa.empresa.length; i++) {
+        //   var empresa = userData.data.pacienteEmpresa.empresa[i];
+
+          
+        // }
+
+
+      userData?.data?.pacienteEmpresa?.forEach((pacienteEmpresa) {
+        var idnegocio = pacienteEmpresa.empresa?.idUneg;
+        var razonSocial = pacienteEmpresa.empresa?.razonSocial;
+        // print('Empresa: $razonSocial');
+
+
+        empresas.add(
+          EmpresaModel(
+             int.parse('$idnegocio'), // puedes usar el índice como ID temporal
+            'Empresa : $razonSocial',
+            Icons.business, // puedes cambiar el ícono según algún campo si deseas
+          ),
+        );
+
+      });
+
+   
+
+  
+
+
+      });
+    }
+
+    return empresas;
+  }
+
+ 
+
+  // Method to handle selecting an empresa
+  Future<void> _seleccionarEmpresa() async {
+
+//  final List<EmpresaModel> empresas = [
+//     EmpresaModel(1, 'GlobalTech', Icons.business),
+//     EmpresaModel(2, 'InnovaCorp', Icons.lightbulb),
+//     EmpresaModel(3, 'BioHealth', Icons.local_hospital),
+//     EmpresaModel(4, 'GreenEnergy', Icons.bolt),
+//     EmpresaModel(5, 'SoftSolutions', Icons.devices),
+//   ];
+
+ List<EmpresaModel> empresas = await _loadEmpresas();
+
+
+    final seleccion = await seleccionarEmpresa(context, empresas);
+    if (seleccion != null) {
+      setState(() {
+        empresaSeleccionada = seleccion;
+      });
+
+      // Navigate to the MainScreen after selecting empresa
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainScreen(),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +124,13 @@ class SelectionUserScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Fondo completo
+          // Background
           SizedBox.expand(
             child: Image.asset(
               'assets/selectionuserNew.png',
               fit: BoxFit.cover,
             ),
           ),
-          // Contenido encima
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(24),
@@ -28,27 +138,17 @@ class SelectionUserScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-
-                  // Logo centrado arriba
                   Center(
-                    child: Image.asset(
-                      'assets/drLink.png',
-                      height: 80,
-                    ),
+                    child: Image.asset('assets/drLink.png', height: 80),
                   ),
-
                   const SizedBox(height: 40),
-
-                  // Botón: Soy Doctor
                   Center(
                     child: SizedBox(
                       width: buttonWidth,
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MainScreen()),
-                          );
+                          // Show maintenance message for doctors
+                          UIHelper.mostrarMensaje(context, "En mantenimiento");
                         },
                         icon: Image.asset(
                           'assets/iconDoctor.png',
@@ -68,20 +168,12 @@ class SelectionUserScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
-
-                  // Botón: Soy Paciente
                   Center(
                     child: SizedBox(
                       width: buttonWidth,
                       child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const MainScreen()),
-                          );
-                        },
+                        onPressed: _seleccionarEmpresa,
                         icon: Image.asset(
                           'assets/iconPaciente.png',
                           height: 40,
