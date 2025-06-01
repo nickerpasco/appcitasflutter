@@ -3,10 +3,8 @@ import 'package:app_salud_citas/vistas/HistorialScreen.dart';
 import 'package:app_salud_citas/vistas/RecetasScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/vistas/menu_screen.dart';
-import 'package:app_salud_citas/vistas/splah_screed.dart';
-import 'package:app_salud_citas/vistas/menu_screen.dart';
-import 'package:app_salud_citas/vistas/selection_user_screen.dart';
 import 'package:app_salud_citas/vistas/PacienteDetalleScreen.dart';
+import 'package:app_salud_citas/vistas/AgendarCitaScreen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,25 +15,51 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-
-  final List<Widget> _pages = const [
-    MenuClinicasPage(),
-    PacienteDetalleScreen(),
-    RecetasScreen(),
-    HistorialScreen(),
-    ArchivoScreen(),
-  ];
+  bool _mostrarAgendar = false;
 
   void _onItemTapped(int index) {
     setState(() {
+      _mostrarAgendar = false;
       _selectedIndex = index;
+    });
+  }
+
+  void _irAAgendarCita() {
+    setState(() {
+      _mostrarAgendar = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      MenuClinicasPage(onAgendarCita: _irAAgendarCita),
+      const PacienteDetalleScreen(),
+      const RecetasScreen(),
+      const HistorialScreen(),
+      const ArchivoScreen(),
+    ];
+
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: Stack(
+        children: [
+          // Páginas principales
+          Offstage(
+            offstage: _mostrarAgendar,
+            child: _pages[_selectedIndex],
+          ),
+
+          // Pantalla de Agendar Cita (mantiene la barra abajo)
+          if (_mostrarAgendar)
+            AgendarCitaScreen(
+              nombreDoctor: 'Doctor demo',
+              nombrePaciente: 'Paciente demo',
+              idEspecialidad: 0,
+              idEmpleado: 0,
+              nombreEspecialidad: 'Especialidad demo',
+            ),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _selectedIndex,
@@ -50,7 +74,6 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.folder), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: ''),
           BottomNavigationBarItem(icon: Icon(Icons.image), label: ''),
-
         ],
       ),
     );

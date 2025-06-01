@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:app_salud_citas/models/LoginResponse.dart';
+import 'package:app_salud_citas/vistas/AgendarCitaScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app_salud_citas/providers/EspecialidadProvider.dart';
@@ -8,13 +9,13 @@ import 'package:app_salud_citas/models/especialidad.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuClinicasPage extends StatefulWidget {
-  const MenuClinicasPage({super.key});
+  final VoidCallback onAgendarCita;
+
+  const MenuClinicasPage({super.key, required this.onAgendarCita});
 
   @override
   State<MenuClinicasPage> createState() => _MenuClinicasPageState();
 }
-
-
 
 class _MenuClinicasPageState extends State<MenuClinicasPage> {
   String _nombreUsuario = 'Sin Nombre';
@@ -29,6 +30,7 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
       });
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -126,7 +128,8 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
                     ],
                   ),
                   const SizedBox(height: 20),
-                  // Notificación de cita
+
+                  // Notificación
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -150,16 +153,13 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
                         SizedBox(height: 6),
                         Text(
                           'Usted tiene una cita en la sucursal de Miraflores\na las 03:18 pm del 25/04/2025',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black87,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.black87),
                         ),
                       ],
                     ),
                   ),
 
-                  // Lista de doctores por especialidad
+                  // Lista de doctores
                   Expanded(
                     child: especialidadProvider.isLoading
                         ? const Center(child: CircularProgressIndicator())
@@ -192,10 +192,25 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
                             const SizedBox(height: 10),
                             ...especialidad.empleados.map(
                                   (e) => _DoctorCard(
-                                name: e.empleado ?? 'Desconocido',
-                                specialty: especialidad.especialidad ?? '',
-                                location: 'Sucursal no especificada',
-                              ),
+                                    name: e.empleado ?? 'Desconocido',
+                                    specialty: especialidad.especialidad ?? '',
+                                    location: 'Sucursal no especificada',
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => AgendarCitaScreen(
+                                            nombreDoctor: e.empleado ?? '',
+                                            nombrePaciente: _nombreUsuario ?? '',
+                                            idEspecialidad: especialidad.idEspecialidad ?? 0,
+                                            idEmpleado: e.idEmpleado ?? 0,
+                                            nombreEspecialidad: especialidad.especialidad ?? '',
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+
                             ),
                             const SizedBox(height: 20),
                           ],
@@ -203,11 +218,10 @@ class _MenuClinicasPageState extends State<MenuClinicasPage> {
                       },
                     ),
                   ),
-
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -239,63 +253,68 @@ class _DoctorCard extends StatelessWidget {
   final String name;
   final String specialty;
   final String location;
+  final VoidCallback? onTap;
 
   const _DoctorCard({
     required this.name,
     required this.specialty,
     required this.location,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          const CircleAvatar(
-            radius: 28,
-            backgroundImage: AssetImage('assets/doctor.png'),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF4B2C20))),
-                Text(specialty, style: const TextStyle(fontSize: 14)),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.green, size: 16),
-                    const SizedBox(width: 4),
-                    Text(location, style: const TextStyle(fontSize: 13)),
-                  ],
-                ),
-              ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            )
+          ],
+        ),
+        child: Row(
+          children: [
+            const CircleAvatar(
+              radius: 28,
+              backgroundImage: AssetImage('assets/doctor.png'),
             ),
-          ),
-          const SizedBox(width: 8),
-          Row(
-            children: const [
-              Icon(Icons.star, color: Colors.amber, size: 18),
-              SizedBox(width: 4),
-              Text('4.9', style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          )
-        ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF4B2C20))),
+                  Text(specialty, style: const TextStyle(fontSize: 14)),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.green, size: 16),
+                      const SizedBox(width: 4),
+                      Text(location, style: const TextStyle(fontSize: 13)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Row(
+              children: const [
+                Icon(Icons.star, color: Colors.amber, size: 18),
+                SizedBox(width: 4),
+                Text('4.9', style: TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }

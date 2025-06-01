@@ -62,10 +62,10 @@ class HomeScreen extends StatelessWidget {
             // Botón ir a MenuScreen
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                /*Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const MenuClinicasPage()),
-                );
+                  //MaterialPageRoute(builder: (_) => const MenuClinicasPage()),
+                );*/
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),

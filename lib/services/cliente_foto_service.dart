@@ -14,8 +14,8 @@ class ClienteFotoService {
     if (userData == null) throw Exception('No hay sesión activa');
 
     final loginResponse = LoginResponse.fromJson(jsonDecode(userData));
-    //final idCliente = loginResponse.data?.pacienteEmpresa?.first.idCliente ?? 0;
-    final idCliente = 13;
+    final idCliente = loginResponse.data?.pacienteEmpresa?.first.idCliente ?? 0;
+    //final idCliente = 13;
     final idUneg = loginResponse.data?.pacienteEmpresa?.first.idUneg ?? 0;
 
     final url = Uri.parse('${ApiConstants.baseUrl}/api/Cliente_foto/list?id_cliente=$idCliente&id_uneg=$idUneg');
