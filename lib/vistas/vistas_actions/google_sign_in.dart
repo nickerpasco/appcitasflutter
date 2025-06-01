@@ -11,7 +11,7 @@ class GoogleButton extends StatelessWidget {
       onPressed: onPressed,
       icon: Image.asset('assets/ic_google.png', height: 24, width: 24),
       label: const Text(
-        'continuar con google',
+        'Continuar con Google',
         style: TextStyle(color: Colors.black, fontSize: 16),
       ),
       style: OutlinedButton.styleFrom(

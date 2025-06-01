@@ -1,6 +1,7 @@
+import 'package:app_salud_citas/vistas/CrearPacienteScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app_salud_citas/vistas/selection_user_screen.dart';
+import 'package:app_salud_citas/vistas/selection_user_screen.dart';  // Asegúrate de importar la pantalla de CrearPaciente
 import 'package:app_salud_citas/providers/login_provider.dart';
 
 class NewLoginScreen extends StatelessWidget {
@@ -104,7 +105,7 @@ class NewLoginScreen extends StatelessWidget {
                             ),
                           ),
                           onPressed: () async {
-                            final success = await loginProvider.login();
+                            final success = await loginProvider.login(context);
                             if (success) {
                               Navigator.push(
                                 context,
@@ -140,13 +141,11 @@ class NewLoginScreen extends StatelessWidget {
 
                         OutlinedButton.icon(
                           onPressed: () {
-
-                          loginProvider.loginGmailInit();
-
+                            loginProvider.loginGmailInit();
                           },
                           icon: Image.asset('assets/ic_google.png', height: 24, width: 24),
                           label: const Text(
-                            'continuar con google',
+                            'Continuar con Google',
                             style: TextStyle(color: Colors.black, fontSize: 16),
                           ),
                           style: OutlinedButton.styleFrom(
@@ -156,11 +155,28 @@ class NewLoginScreen extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             side: const BorderSide(color: Colors.black12),
                           ),
-
-                          
                         ),
 
                         const SizedBox(height: 40),
+
+                        // Botón Registrarse
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>   CrearPacienteScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            '¿No tienes cuenta? Regístrate',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -13,8 +13,8 @@ class ProcedimientoService {
     if (userJson == null) throw Exception('Usuario no logueado');
     final userMap = jsonDecode(userJson);
     final pacienteEmpresa = userMap['data']['pacienteEmpresa'][0];
-    //final idCliente = pacienteEmpresa['id_cliente'];
-    final idCliente = 30;
+    final idCliente = pacienteEmpresa['id_cliente'];
+    //final idCliente = 30;
     final idUneg = pacienteEmpresa['id_uneg'];
 
     final url = Uri.parse('${ApiConstants.baseUrl}/api/Hc_procedimiento/list-app?id_uneg=$idUneg&id_cliente=$idCliente');
