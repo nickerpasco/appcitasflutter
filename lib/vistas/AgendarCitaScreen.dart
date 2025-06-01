@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_salud_citas/controllers/CitaController.dart';
 import 'package:app_salud_citas/models/LoginResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:date_picker_timeline/date_picker_timeline.dart';
@@ -313,5 +314,87 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         borderSide: BorderSide.none,
       ),
     );
+  }
+
+
+
+    void agendarCita() async {
+
+
+
+
+
+
+  final CitaController controller = CitaController(); // tu URL real
+
+
+    final payload = armarPayload();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Agendando cita...")),
+    );
+
+    final result = await controller.agendarCita(payload);
+
+    if (result['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ Cita agendada correctamente")),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Error: ${result['error']}")),
+      );
+    }
+  }
+
+
+
+  
+  Map<String, dynamic> armarPayload() {
+    return {
+      "CitaDto": {
+        "Cita": {
+          "id_cliente": 12,
+          "id_empleado": 5,
+          "id_motivo": null,
+          "id_especialidad": 3,
+          "horaDuracion": 1,
+          "minutosDuracion": 30,
+          "fechaInicio": "2025-04-25T15:00:00",
+          "horaInicio": "15:00:00",
+          "id_consultorio": null,
+          "id_frecuencia": null,
+          "nota": "Paciente con antecedentes",
+          "estadoCitaMedica": 1,
+          "app_nombre": "app_nombre",
+          "app_codigo_pais": "+51",
+          "app_telefono": "993430563",
+          "end": "2025-04-25T15:00:00",
+          "start": "2025-04-25T15:00:00",
+          "app_comentario": "comentario",
+          "nombre_completo": "nombre usuario logeado"
+        },
+        "citaServicio": [
+          {"id_servicio": 10}
+        ],
+        "id_uneg": 1
+      },
+      "EventoCalendar": {
+        "idUsuario": "2628df95-e732-4a44-8c7b-f67abfe34b21",
+        "summary": "Reunion Skin Center - Sala 2",
+        "location": "Av. Alfredo Benavides 1335, Miraflores 15047",
+        "start": {
+          "dateTime": "2025-04-25T15:00:00",
+          "timeZone": "America/Lima"
+        },
+        "end": {
+          "dateTime": "2025-04-25T16:30:00",
+          "timeZone": "America/Lima"
+        },
+        "Attendees": [
+          {"Email": "keny@gmail.com"}
+        ]
+      }
+    };
   }
 }

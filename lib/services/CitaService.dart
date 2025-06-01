@@ -5,14 +5,13 @@ import 'package:app_salud_citas/constants/api_constants.dart';
 import 'package:http/http.dart' as http;
 
 class CitaService {
-  final String baseUrl;
+  // final String baseUrl;
 
 
-    final _apiUrl = Uri.parse('${ApiConstants.baseUrl}');
+    final baseUrl = Uri.parse('${ApiConstants.baseUrl}');
 
 
-
-  CitaService({required this.baseUrl});
+  // CitaService({required this.baseUrl});
 
   Future<Map<String, dynamic>> enviarCita(Map<String, dynamic> payload) async {
     final url = Uri.parse('$baseUrl/secengine/auth/login-paciente');
