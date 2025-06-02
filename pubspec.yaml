@@ -122,11 +122,15 @@ flutter:
           weight: 400
 #SplashScreen
 flutter_native_splash:
-  color: "#ffffff"
-  image: assets/welcomeSplash.png
+  color: "#3D7E62" # Fondo más llamativo (igual al color final de tu gradiente)
+  image: assets/drLink.png # Logo o ícono principal
   android: true
   ios: true
   fullscreen: true
+
+  # Puedes agregar un logo secundario para mejor impacto visual
+  android_gravity: center
+  ios_content_mode: scaleAspectFit
           
  
   # example:

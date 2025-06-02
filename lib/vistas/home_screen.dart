@@ -1,9 +1,9 @@
-import 'package:app_salud_citas/vistas/menu_screen.dart';
-import 'package:app_salud_citas/vistas/splah_screed.dart';
+import 'package:app_salud_citas/vistas/menu_screen.dart'; 
 import 'package:app_salud_citas/vistas/menu_screen.dart';
 import 'package:app_salud_citas/vistas/selection_user_screen.dart';
 import 'package:app_salud_citas/vistas/PacienteDetalleScreen.dart';
 import 'package:app_salud_citas/vistas/RecetasScreen.dart';
+import 'package:app_salud_citas/vistas/splah_screed.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';   // Asegúrate de importar tu LoginScreen
 
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const SplashScreen()),
+                  MaterialPageRoute(builder: (_) => const WelcomeScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
