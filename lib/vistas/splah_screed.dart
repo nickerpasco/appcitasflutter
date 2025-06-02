@@ -1,8 +1,10 @@
 import 'package:app_salud_citas/vistas/NewLoginScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 class SplashScreen extends StatefulWidget{
   const SplashScreen({super.key});
+
 
   @override
   State<SplashScreen> createState() => _SplashScreen();
@@ -91,19 +93,21 @@ with SingleTickerProviderStateMixin{
               ),
             ),
 
-
-              // Label blanco centrado
+            // Subtítulo centrado
             const Positioned(
               top: 150,
               left: 0,
               right: 0,
-              child: Text(
-                '¡La unica aplicacion que te brinda las mejores clinicas y especialistas del pais en un solo lugar!',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text(
+                  '¡La única aplicación que te brinda las mejores clínicas y especialistas del país en un solo lugar!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -115,6 +119,37 @@ with SingleTickerProviderStateMixin{
               child: Image.asset(
                 'assets/doctor.png',
                 width: 260,
+              ),
+            ),
+
+            // Botón "Continuar"
+            Positioned(
+              bottom: 40,
+              right: 20,
+              child: ElevatedButton(
+                onPressed: () {
+                 Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewLoginScreen()),
+              );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF3D7E62),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  elevation: 8,
+                  textStyle: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: const Text('Continuar'),
               ),
             ),
           ],
