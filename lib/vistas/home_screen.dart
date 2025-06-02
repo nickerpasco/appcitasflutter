@@ -30,10 +30,10 @@ class HomeScreen extends StatelessWidget {
             // Botón ir a SplashScreen
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
+                /*Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const WelcomeScreen()),
-                );
+                );*/
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 255, 255, 255),

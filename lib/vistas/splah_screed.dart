@@ -10,7 +10,7 @@ class SplashScreen extends StatefulWidget{
   State<SplashScreen> createState() => _SplashScreen();
 }
 class _SplashScreen extends State<SplashScreen>
-with SingleTickerProviderStateMixin{
+    with SingleTickerProviderStateMixin{
 
   @override
   void initState() {
@@ -19,7 +19,7 @@ with SingleTickerProviderStateMixin{
 
     Future.delayed(Duration(seconds: 3),() {
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder:(_) => const NewLoginScreen(),
+        builder:(_) => const NewLoginScreen(),
       ),
       );
 
@@ -128,10 +128,10 @@ with SingleTickerProviderStateMixin{
               right: 20,
               child: ElevatedButton(
                 onPressed: () {
-                 Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NewLoginScreen()),
-              );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NewLoginScreen()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
