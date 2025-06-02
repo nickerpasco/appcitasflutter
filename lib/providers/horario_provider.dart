@@ -41,6 +41,20 @@ class HorarioProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void limpiarFormulario() {
+    doctor = null;
+    nombre = null;
+    especialidad = null;
+    horaSeleccionada = null;
+    //horasNoDisponibles = [];
+    errorDoctor = null;
+    errorEspecialidad = null;
+    errorHora = null;
+    errorNombre = null;
+    errorTelefono = null;
+    notifyListeners();
+  }
+
 
   bool validarFormulario() {
     errorDoctor = doctor == null || doctor!.isEmpty ? 'Seleccione un doctor' : null;

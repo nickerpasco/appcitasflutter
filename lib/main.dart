@@ -5,6 +5,7 @@ import 'package:app_salud_citas/providers/cliente_foto_provider.dart';
 import 'package:app_salud_citas/providers/horario_provider.dart';
 import 'package:app_salud_citas/providers/procedimiento_provider.dart';
 import 'package:app_salud_citas/vistas/firebase/GoogleSignInScreen.dart';
+import 'package:app_salud_citas/vistas/splah_screed.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:flutter/material.dart';
@@ -48,7 +49,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Menu Principal',
-      home: const NewLoginScreen(),
+      home: const SplashScreen(),
+      //home: const NewLoginScreen(),
       //home: const AgendarCitaScreen(),
     );
   }

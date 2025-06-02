@@ -196,11 +196,13 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                                   ),
                                 ),
                                 Positioned(
-                                  bottom: -30,
+                                  bottom: -20,
                                   right: 8,
                                   child: Container(
                                     padding: const EdgeInsets.all(12),
-                                    width: 250,
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 180,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFF82EAC1),
                                       borderRadius: BorderRadius.circular(12),
@@ -210,7 +212,6 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                                       children: [
                                         const Text('Tratamientos', style: TextStyle(fontWeight: FontWeight.bold)),
                                         Text(a.tratamientos ?? ''),
-                                        // Text(a.nombreCompletoDoctor ?? ''),
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: Text(
@@ -224,6 +225,7 @@ class _PacienteDetalleScreenState extends State<PacienteDetalleScreen> {
                                     ),
                                   ),
                                 ),
+
                               ],
                             ),
                           );

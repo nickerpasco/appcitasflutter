@@ -1,7 +1,7 @@
 import 'package:app_salud_citas/vistas/CrearPacienteScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app_salud_citas/vistas/selection_user_screen.dart';  // Asegúrate de importar la pantalla de CrearPaciente
+import 'package:app_salud_citas/vistas/selection_user_screen.dart';
 import 'package:app_salud_citas/providers/login_provider.dart';
 
 class NewLoginScreen extends StatelessWidget {
@@ -12,26 +12,27 @@ class NewLoginScreen extends StatelessWidget {
     final loginProvider = Provider.of<LoginProvider>(context);
 
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: false, // <- Clave para evitar que se empuje el fondo
       body: Stack(
         children: [
-          // Fondo
-          SizedBox.expand(
+          // Fondo estático
+          Positioned.fill(
             child: Image.asset(
               'assets/NewLogin.png',
               fit: BoxFit.cover,
             ),
           ),
+
           // Contenido principal
           SafeArea(
-            child: SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height,
-                ),
-                child: IntrinsicHeight(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: MediaQuery.of(context).size.height,
+                  ),
+                  child: IntrinsicHeight(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -68,7 +69,9 @@ class NewLoginScreen extends StatelessWidget {
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                loginProvider.obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                loginProvider.obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                                 color: Colors.grey,
                               ),
                               onPressed: () {
@@ -110,18 +113,26 @@ class NewLoginScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const SelectionUserScreen(),
+                                  builder: (context) =>
+                                  const SelectionUserScreen(),
                                 ),
                               );
                             } else {
                               if (loginProvider.errorMessage != null) {
-                                showCenteredPopup(context, loginProvider.errorMessage!);
+                                showCenteredPopup(
+                                    context, loginProvider.errorMessage!);
                               }
                             }
                           },
                           child: loginProvider.isLoading
-                              ? const CircularProgressIndicator(color: Colors.white)
-                              : const Text('Ingresar', style: TextStyle(color: Colors.white, fontSize: 16)),
+                              ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                              : const Text(
+                            'Ingresar',
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
                         ),
 
                         const SizedBox(height: 16),
@@ -143,10 +154,12 @@ class NewLoginScreen extends StatelessWidget {
                           onPressed: () {
                             loginProvider.loginGmailInit();
                           },
-                          icon: Image.asset('assets/ic_google.png', height: 24, width: 24),
+                          icon: Image.asset('assets/ic_google.png',
+                              height: 24, width: 24),
                           label: const Text(
                             'Continuar con Google',
-                            style: TextStyle(color: Colors.black, fontSize: 16),
+                            style:
+                            TextStyle(color: Colors.black, fontSize: 16),
                           ),
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -165,7 +178,7 @@ class NewLoginScreen extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>   CrearPacienteScreen(),
+                                builder: (context) => CrearPacienteScreen(),
                               ),
                             );
                           },

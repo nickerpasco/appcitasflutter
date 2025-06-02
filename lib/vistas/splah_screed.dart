@@ -1,7 +1,35 @@
+import 'package:app_salud_citas/vistas/NewLoginScreen.dart';
 import 'package:flutter/material.dart';
-
-class SplashScreen extends StatelessWidget {
+import 'package:flutter/services.dart';
+class SplashScreen extends StatefulWidget{
   const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreen();
+}
+class _SplashScreen extends State<SplashScreen>
+with SingleTickerProviderStateMixin{
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
+    Future.delayed(Duration(seconds: 3),() {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder:(_) => const NewLoginScreen(),
+      ),
+      );
+
+    });
+  }
+
+  @override
+  void dispose(){
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: SystemUiOverlay.values);
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {

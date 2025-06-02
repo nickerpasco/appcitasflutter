@@ -49,6 +49,31 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   String _fechaNacFormated = '';
   int idCliente = 0;
 
+  bool _dataInicializada = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_dataInicializada) {
+      final provider = Provider.of<HorarioProvider>(context, listen: false);
+
+      provider.limpiarFormulario(); // <- Asegúrate de tener este método en tu provider
+
+      cargarNombreUsuario();
+
+      provider.setDoctor(widget.nombreDoctor);
+      provider.setNombre(widget.nombrePaciente);
+      provider.setEspecialidad(widget.nombreEspecialidad);
+      provider.cargarHorasNoDisponibles(
+        fecha: selectedDate,
+        idUneg: 1,
+        idEmpleado: widget.idEmpleado,
+      );
+
+      _dataInicializada = true;
+    }
+  }
+
   Future<void> cargarNombreUsuario() async {
     final prefs = await SharedPreferences.getInstance();
     final json = prefs.getString('user_data');
@@ -92,7 +117,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
+    /*Future.microtask(() {
       final provider = Provider.of<HorarioProvider>(context, listen: false);
       cargarNombreUsuario();
       provider.setDoctor(widget.nombreDoctor);
@@ -103,7 +128,7 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
         idUneg: 1,
         idEmpleado: widget.idEmpleado,
       );
-    });
+    });*/
   }
 
   void _onDateChange(DateTime date) {
@@ -227,23 +252,30 @@ class _AgendarCitaScreenState extends State<AgendarCitaScreen> {
                               thumbVisibility: true,
                               child: SingleChildScrollView(
                                 controller: _scrollController,
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: horasDisponibles.map((hora) {
-                                    final isDisabled = horasNoDisponibles.any((h) => h.startsWith(hora.split(' ')[0]));
-                                    final selected = provider.horaSeleccionada == hora;
-                                    return ChoiceChip(
-                                      label: Text(hora),
-                                      selected: selected,
-                                      selectedColor: const Color(0xFF2E687A),
-                                      onSelected: isDisabled ? null : (_) {
-                                        provider.setHora(hora);
-                                        this.horaString = hora;
-                                      },
-                                      disabledColor: Colors.grey.shade300,
-                                    );
-                                  }).toList(),
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center, // 👈 centra horizontalmente los chips
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: horasDisponibles.map((hora) {
+                                        final isDisabled = horasNoDisponibles.any((h) => h.startsWith(hora.split(' ')[0]));
+                                        final selected = provider.horaSeleccionada == hora;
+                                        return ChoiceChip(
+                                          label: Text(hora),
+                                          selected: selected,
+                                          selectedColor: const Color(0xFF2E687A),
+                                          onSelected: isDisabled ? null : (_) {
+                                            provider.setHora(hora);
+                                            horaString = hora;
+                                          },
+                                          disabledColor: Colors.grey.shade300,
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
