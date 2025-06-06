@@ -1,6 +1,9 @@
+import 'package:app_salud_citas/vistas/selectores/EmpresaSelectorApp.dart';
+import 'package:app_salud_citas/vistas/selectores/models/EmpresaModel.dart';
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/controllers/paciente_controller.dart';
 
+/// Pantalla creada por Nick para registrar un nuevo paciente.
 class CrearPacienteScreen extends StatefulWidget {
   @override
   _CrearPacienteScreenState createState() => _CrearPacienteScreenState();
@@ -8,6 +11,9 @@ class CrearPacienteScreen extends StatefulWidget {
 
 class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
   final PacienteController _controller = PacienteController();
+
+  String nombreempresa= "";
+  int idnegocio = 0; 
 
   @override
   void dispose() {
@@ -21,7 +27,7 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Fondo
+            // Fondo diseñado por Nick
             Positioned.fill(
               child: Image.asset(
                 'assets/crearpacienteBackgorund.png',
@@ -29,7 +35,7 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
               ),
             ),
 
-            // Contenido
+            // Contenido principal
             Column(
               children: [
                 // Encabezado
@@ -68,7 +74,6 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
                   ],
                 ),
 
-
                 // Formulario con scroll
                 Expanded(
                   child: SingleChildScrollView(
@@ -90,7 +95,7 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () => _controller.submitForm(context),
+                      onPressed: () => _controller.submitForm(context,idnegocio),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2EF7B7),
                         foregroundColor: Colors.white,
@@ -114,6 +119,7 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Documento
           Row(
             children: [
               Expanded(
@@ -123,16 +129,19 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
                   children: [
                     const Text("Tipo de documento"),
                     const SizedBox(height: 4),
-                    DropdownButtonFormField<String>(
-                      value: _controller.selectedDocType,
-                      onChanged: (value) {
-                        setState(() => _controller.selectedDocType = value!);
-                      },
-                      isExpanded: true,
-                      items: ["DNI", "CE", "Pasaporte"]
-                          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                          .toList(),
-                      decoration: inputDecoration(),
+                    SizedBox(
+                      height: 40,
+                      child: DropdownButtonFormField<String>(
+                        value: _controller.selectedDocType,
+                        onChanged: (value) {
+                          setState(() => _controller.selectedDocType = value!);
+                        },
+                        isExpanded: true,
+                        items: ["DNI", "CE", "Pasaporte"]
+                            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                            .toList(),
+                        decoration: inputDecoration(),
+                      ),
                     ),
                   ],
                 ),
@@ -146,7 +155,7 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
                     const Text("Documento"),
                     const SizedBox(height: 4),
                     SizedBox(
-                      height: 50,
+                      height: 40,
                       child: TextFormField(
                         controller: _controller.documentoController,
                         decoration: inputDecoration().copyWith(
@@ -207,9 +216,9 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
                 },
                 items: _controller.countryOptions
                     .map((country) => DropdownMenuItem<String>(
-                  value: country['code'],
-                  child: Text('${country['flag']} ${country['code']}'),
-                ))
+                          value: country['code'],
+                          child: Text('${country['flag']} ${country['code']}'),
+                        ))
                     .toList(),
               ),
               const SizedBox(width: 8),
@@ -246,57 +255,93 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
           Row(
             children: [
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _controller.selectedDia,
-                  hint: const Text("Día"),
-                  isExpanded: true,
-                  items: List.generate(31, (i) => '${i + 1}')
-                      .map((day) => DropdownMenuItem(value: day, child: Text(day)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _controller.selectedDia = val),
-                  decoration: inputDecoration(),
+                child: SizedBox(
+                  height: 40,
+                  child: DropdownButtonFormField<String>(
+                    value: _controller.selectedDia,
+                    hint: const Text("Día"),
+                    isExpanded: true,
+                    items: List.generate(31, (i) => '${i + 1}')
+                        .map((day) => DropdownMenuItem(value: day, child: Text(day)))
+                        .toList(),
+                    onChanged: (val) => setState(() => _controller.selectedDia = val),
+                    decoration: inputDecoration(),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _controller.selectedMes,
-                  hint: const Text("Mes"),
-                  isExpanded: true,
-                  items: List.generate(12, (i) => '${i + 1}')
-                      .map((month) => DropdownMenuItem(value: month, child: Text(month)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _controller.selectedMes = val),
-                  decoration: inputDecoration(),
+                child: SizedBox(
+                  height: 40,
+                  child: DropdownButtonFormField<String>(
+                    value: _controller.selectedMes,
+                    hint: const Text("Mes"),
+                    isExpanded: true,
+                    items: List.generate(12, (i) => '${i + 1}')
+                        .map((month) => DropdownMenuItem(value: month, child: Text(month)))
+                        .toList(),
+                    onChanged: (val) => setState(() => _controller.selectedMes = val),
+                    decoration: inputDecoration(),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _controller.selectedAnio,
-                  hint: const Text("Año"),
-                  isExpanded: true,
-                  items: List.generate(100, (i) => '${DateTime.now().year - i}')
-                      .map((year) => DropdownMenuItem(value: year, child: Text(year)))
-                      .toList(),
-                  onChanged: (val) => setState(() => _controller.selectedAnio = val),
-                  decoration: inputDecoration(),
+                child: SizedBox(
+                  height: 40,
+                  child: DropdownButtonFormField<String>(
+                    value: _controller.selectedAnio,
+                    hint: const Text("Año"),
+                    isExpanded: true,
+                    items: List.generate(100, (i) => '${DateTime.now().year - i}')
+                        .map((year) => DropdownMenuItem(value: year, child: Text(year)))
+                        .toList(),
+                    onChanged: (val) => setState(() => _controller.selectedAnio = val),
+                    decoration: inputDecoration(),
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          buildRequiredLabel("Usuario"),
-          SizedBox(
-            height: 40,
-            child: TextFormField(
-              controller: _controller.usuarioController,
-              decoration: inputDecoration().copyWith(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-              ),
-              style: const TextStyle(fontSize: 12),
-            ),
+         
+
+// Reemplazo del campo Usuario por Empresa con botón para abrir modal
+const SizedBox(height: 12),
+buildRequiredLabel("Empresa"),
+Row(
+  children: [
+    Expanded(
+      child: SizedBox(
+        height: 40,
+        child: TextFormField(
+          controller: _controller.empresaController,
+          readOnly: true,
+          decoration: inputDecoration().copyWith(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
           ),
+          style: const TextStyle(fontSize: 12),
+        ),
+      ),
+    ),
+    const SizedBox(width: 8),
+    SizedBox(
+      height: 40,
+      child: ElevatedButton(
+        onPressed: () {
+          // Aquí irá la lógica para abrir el modal de empresas
+          CargarEmpresas(context);
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF2E687A),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+        ),
+        child: const Icon(Icons.business, color: Colors.white),
+      ),
+    ),
+  ],
+),
+
+
           const SizedBox(height: 12),
           buildRequiredLabel("Clave"),
           SizedBox(
@@ -315,7 +360,6 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
     );
   }
 
-
   InputDecoration inputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
@@ -331,7 +375,6 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
     );
   }
 
-
   Widget buildRequiredLabel(String label) {
     return RichText(
       text: TextSpan(
@@ -345,5 +388,56 @@ class _CrearPacienteScreenState extends State<CrearPacienteScreen> {
         ],
       ),
     );
+  }
+
+ 
+    Future<void> CargarEmpresas(context) async {
+
+
+    List<EmpresaModel> empresas = [];
+
+    var lst = await _controller.getEmpresasListController();
+
+
+  
+    lst.forEach((pacienteEmpresa) {
+        var idnegocio = pacienteEmpresa.idUneg;
+        var razonSocial = pacienteEmpresa.razonSocial;
+        // print('Empresa: $razonSocial');
+ 
+        empresas.add(
+          EmpresaModel(
+             int.parse('$idnegocio'), // puedes usar el índice como ID temporal
+            'Empresa : $razonSocial',
+            Icons.business, // puedes cambiar el ícono según algún campo si deseas
+          ),
+        );
+
+      });
+
+
+
+
+
+    final seleccion = await seleccionarEmpresa(context, empresas);
+    if (seleccion != null) {
+      setState(() {
+        //empresaSeleccionada = seleccion;
+
+        idnegocio= seleccion.id;
+        _controller.empresaController.text = seleccion.nombre;
+
+      });
+
+      // Navigate to the MainScreen after selecting empresa
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => const MainScreen(),
+      //   ),
+      // );
+    }
+
+
   }
 }

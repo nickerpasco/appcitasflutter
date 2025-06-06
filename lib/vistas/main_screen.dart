@@ -1,9 +1,9 @@
-import 'package:app_salud_citas/vistas/ArchivoScreen.dart';
-import 'package:app_salud_citas/vistas/HistorialScreen.dart';
-import 'package:app_salud_citas/vistas/RecetasScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/ArchivoScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/HistorialScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/ProcedimientosScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_salud_citas/vistas/menu_screen.dart';
-import 'package:app_salud_citas/vistas/PacienteDetalleScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/AnamnesisScreen.dart';
 import 'package:app_salud_citas/vistas/AgendarCitaScreen.dart';
 
 class MainScreen extends StatefulWidget {

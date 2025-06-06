@@ -11,6 +11,11 @@ class AnamnesisService {
     final token = prefs.getString('auth_token') ?? '';
     final userDataJson = prefs.getString('user_data');
 
+
+    final HC_DATA_ID = prefs.getInt('HC_DATA_ID') ?? '';
+
+
+
     if (userDataJson == null) {
       throw Exception('No hay datos de usuario almacenados');
     }
@@ -24,7 +29,12 @@ class AnamnesisService {
     }
 
     final url = Uri.parse(
-      '${ApiConstants.baseUrl}/api/Hc_anamesis/list?id_paciente=$idCliente&id_uneg=$idUneg',
+
+
+
+//      '${ApiConstants.baseUrl}/api/Hc_anamesis/list?id_paciente=$idCliente&id_uneg=$idUneg',
+
+      '${ApiConstants.baseUrl}/api/Hc_anamesis/list?id_historial_clinico=$HC_DATA_ID',
     );
 
     final response = await http.get(

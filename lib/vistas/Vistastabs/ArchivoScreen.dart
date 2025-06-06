@@ -5,7 +5,7 @@ import 'package:app_salud_citas/vistas/componentes/foto_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../providers/cliente_foto_provider.dart';
+import '../../providers/cliente_foto_provider.dart';
 
 class ArchivoScreen extends StatefulWidget {
   const ArchivoScreen({super.key});
@@ -112,7 +112,7 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                   const SizedBox(height: 12),
                   Text('$_nombreCompleto',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  Text('$_fechaNacFormated  |  WhatsApp',
+                  Text('$_fechaNacFormated  |  WhatsApp 4',
                       style: TextStyle(color: Colors.grey)),
                   const SizedBox(height: 16),
                   Container(
@@ -132,11 +132,11 @@ class _ArchivoScreenState extends State<ArchivoScreen> {
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: const [
-                          _TabButton(label: 'H. Médico'),
+                          _TabButton(label: 'Anamnésis'),
                           SizedBox(width: 8),
                           _TabButton(label: 'Procedimientos'),
                           SizedBox(width: 8),
-                          _TabButton(label: 'Historial'),
+                          _TabButton(label: 'Recetas'),
                           SizedBox(width: 8),
                           _TabButton(label: 'Archivos', selected: true),
                         ],

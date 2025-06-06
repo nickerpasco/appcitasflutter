@@ -1,8 +1,8 @@
 import 'package:app_salud_citas/vistas/menu_screen.dart'; 
 import 'package:app_salud_citas/vistas/menu_screen.dart';
 import 'package:app_salud_citas/vistas/selection_user_screen.dart';
-import 'package:app_salud_citas/vistas/PacienteDetalleScreen.dart';
-import 'package:app_salud_citas/vistas/RecetasScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/AnamnesisScreen.dart';
+import 'package:app_salud_citas/vistas/Vistastabs/ProcedimientosScreen.dart';
 import 'package:app_salud_citas/vistas/splah_screed.dart';
 import 'package:flutter/material.dart';
 import 'login_screen.dart';   // Asegúrate de importar tu LoginScreen

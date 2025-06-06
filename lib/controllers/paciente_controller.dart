@@ -1,3 +1,4 @@
+import 'package:app_salud_citas/models/EmpresaList.dart';
 import 'package:app_salud_citas/utils/NavigationHelper.dart';
 import 'package:app_salud_citas/utils/UIHelper.dart';
 import 'package:app_salud_citas/vistas/NewLoginScreen.dart';
@@ -20,6 +21,9 @@ class PacienteController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController usuarioController = TextEditingController();
   final TextEditingController claveController = TextEditingController();
+  final TextEditingController empresaController = TextEditingController();
+  
+  
 
   String? selectedDia;
   String? selectedMes;
@@ -32,7 +36,18 @@ class PacienteController {
     {'code': '+34', 'flag': '🇪🇸'},
   ];
 
-  Future<Paciente?> submitForm(BuildContext context) async {
+
+  Future<List<EmpresaList>> getEmpresasListController() async {
+
+     final uService = UsuarioService();
+    final resultado = await uService.getEmpresasList();
+
+    return resultado;
+  }
+
+
+
+  Future<Paciente?> submitForm(BuildContext context,int IdEmpresaSeleccionado ) async {
     if (formKey.currentState?.validate() ?? false) {
       final paciente = Paciente(
         tipoDoc: selectedDocType,
@@ -45,7 +60,7 @@ class PacienteController {
         usuario: usuarioController.text,
         clave: claveController.text,
         codigoPais: selectedCountryCode,
-        banderaPais: selectedFlag,
+        banderaPais: selectedFlag, 
       );
 
       print("Paciente a registrar:");
@@ -64,6 +79,7 @@ class PacienteController {
           email: paciente.email,
           telefono: paciente.telefono,
           passwordHash: paciente.clave,
+          idUneg: IdEmpresaSeleccionado
         );
 
         if (resultado['success']) {
@@ -109,7 +125,18 @@ class PacienteController {
 
         return paciente;
       } catch (e) {
-        print('⚠️ Excepción al crear paciente: $e');
+        
+
+
+        UIHelper.mostrarMensajeDialog(
+        context: context,
+        titulo: 'Error',
+        mensaje: '⚠️ Excepción al crear paciente: $e',
+        icono: Icons.error_outline,
+        colorIcono: Colors.redAccent,
+        );
+
+
         return null;
       }
     }

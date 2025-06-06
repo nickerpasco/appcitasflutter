@@ -17,7 +17,15 @@ class ProcedimientoService {
     //final idCliente = 30;
     final idUneg = pacienteEmpresa['id_uneg'];
 
-    final url = Uri.parse('${ApiConstants.baseUrl}/api/Hc_procedimiento/list-app?id_uneg=$idUneg&id_cliente=$idCliente');
+  final HC_DATA_ID = prefs.getInt('HC_DATA_ID') ?? '';
+
+
+
+final url = Uri.parse('${ApiConstants.baseUrl}/api/Hc_procedimiento/list-app?id_historial_clinico=$HC_DATA_ID');
+    // final url = Uri.parse('${ApiConstants.baseUrl}/api/Hc_procedimiento/list-app?id_uneg=$idUneg&id_cliente=$idCliente');
+
+
+
 
     final response = await http.get(url, headers: {
       'Authorization': 'Bearer $token',
@@ -26,8 +34,15 @@ class ProcedimientoService {
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body);
       final List<dynamic> data = jsonResponse['data'] ?? [];
+
+      String dataJson = json.encode(data); // Convertir a JSON (String)
+
       final procedimientos = data.expand((e) {
+
+        
         return (e['procedimientos'] as List).map((i) => DetalleProcedimiento.fromJson(i));
+
+
       }).toList();
       return List<DetalleProcedimiento>.from(procedimientos);
     } else {
